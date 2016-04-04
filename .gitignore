@@ -63,4 +63,4 @@ target/
 
 #Eclipse junk
 .project
-.pydev_project  
+.pydevproject  
