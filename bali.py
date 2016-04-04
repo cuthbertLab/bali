@@ -1,6 +1,19 @@
 # -*- coding: utf-8 -*-
+'''
+bali -- collection of modules for analyzing Balinese music
+
+Copyright 2016, cuthbertLab at MIT
+
+Released under the BSD 3-Clause license.
+
+
+Authors: Katherine Young <kayoung@mit.edu>
+         Michael Scott Cuthbert
+
+'''
 
 from __future__ import print_function, absolute_import, division
+
 #import bali
 import io
 import os 
