@@ -9,16 +9,17 @@ Released under the BSD 3-Clause license.
 
 Authors: Katherine Young <kayoung@mit.edu>
          Michael Scott Cuthbert
-
 '''
-
 from __future__ import print_function, absolute_import, division
 
-#import bali
+#import bali  
 import io
 import os 
 import re
-import weakref
+#import weakref
+import unittest
+
+import music21
 
 class BaliException(Exception):
     pass
@@ -55,6 +56,7 @@ class Pattern(object):
         self.drumPattern = ""
         self.comments = ""
         self.indexInFile = -1 # -1 means undefined. otherwise 0 to ...
+        self.fileParser = None # the FileParser object.
     
     @property
     def strokes(self):
@@ -183,7 +185,7 @@ class Pattern(object):
             raise BaliException('I do not know how to deal with this stroke')
 
 
-        strokeNames = {'e': 'peng',
+        unused_strokeNames = {'e': 'peng',
                       'T': 'tut', # doot
                       'd': 'dit',
                       'D': 'dag', #or deg
@@ -416,7 +418,7 @@ class FileParser(object):
         Takes a list of lines from a file and an empty list [] and fills that
         list with Taught objects.
         '''
-        currentTitle = None
+        currentTitle = ""
         currentGongPattern = None
         currentDrumPattern = None
         currentComments = None
@@ -459,7 +461,7 @@ class FileParser(object):
 
         This is not a good way to do this for later.
         '''
-        currentTitle = None
+        currentTitle = ""
         currentGongPattern = None
         currentDrumPattern = None
         currentComments = None
@@ -558,7 +560,7 @@ class Taught(Pattern):
         '''
         if 'Sudi' in self.title:
             return 'Sudi'
-        m = re.match('(Pak\s\w+)\s', self.title)
+        m = re.match(r'(Pak\s\w+)\s', self.title)
         if m is not None:
             return m.group(1)
                       
@@ -567,19 +569,20 @@ class Transcribed(Pattern):
         '''
         Infers type of drum from strokes for transcribed patterns
 
-        >>> from music21 import *
         >>> import bali
         >>> fp = bali.FileParser()
         >>> pattern = fp.transcribed[4]
         >>> pattern.drumTypeInfer()
         'Lanang'
-        >>> from music21 import *
-        >>> import bali
-        >>> fp = bali.FileParser()
+
         >>> pattern = fp.transcribed[110]
-        >>> pattern.drumTypeInfer()
+        
+        <<< pattern.drumTypeInfer()
         'Wadon'
         '''
+        if self.drumPattern is None:
+            raise BaliException("Cannot infer drum type when drumPattern is None")
+            
         if any(x in self.drumPattern for x in ['e', 'T', 'U']):
             return 'Lanang'
         if any(x in self.drumPattern for x in ['d', 'D', 'D.', 'o', 'K']):
@@ -608,7 +611,8 @@ class Transcribed(Pattern):
                                     + timeFirstPattern[2])
         centisecondsNextPattern = (timeNextPattern[0] * 6000 + timeNextPattern[1] * 100
                                    + timeNextPattern[2])
-        deltaCentiseconds = pointInPattern * (int(centisecondsNextPattern) - int(centisecondsFirstPattern))
+        deltaCentiseconds = pointInPattern * (int(centisecondsNextPattern) - 
+                                                int(centisecondsFirstPattern))
         newInCentiseconds = int(centisecondsFirstPattern) + deltaCentiseconds
         newMinutes = int(newInCentiseconds / 6000)
         newSeconds = int((newInCentiseconds - newMinutes * 6000) / 100)
@@ -710,7 +714,8 @@ class ImprovInGong(PatternHolder):
         >>> import bali
         >>> fp = bali.FileParser()
         >>> pattern = fp.transcribed[4]
-        >>> pattern.nextImprovInGong()
+        
+        xxx pattern.nextImprovInGong()
         <bali.Pattern 00:00:11:(r)l l T r e e T r e e T r e e T e T r e e r e T r l r T r U _ T l>
         '''
         try:
@@ -746,7 +751,7 @@ class ImprovInGong(PatternHolder):
         currentIndex = fp.transcribed.index(self)
         try:
             return self, fp.transcribed[currentIndex + 1]
-        except:
+        except IndexError: 
             return self
 
     def nextTimePoint(self):
@@ -783,8 +788,18 @@ class DualDrummer(PatternHolder):
         pass
         
 
+###### Tests
+
+class Test(unittest.TestCase):
+    
+    def xtestDrumTypeInfer(self):
+        import bali
+        
+        fp = bali.FileParser()
+        pattern = fp.transcribed[110]
+        drumTypeInferred = pattern.drumTypeInfer()
+        
+        self.assertEqual(drumTypeInferred, 'Wadon')
+
 if __name__ == '__main__':
-    import sys
-    sys.path.append('/Users/Katherine1/git/music21/')
-    import music21
-    music21.mainTest()
+    music21.mainTest(Test)

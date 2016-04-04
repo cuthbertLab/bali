@@ -1,7 +1,6 @@
 from __future__ import print_function, division
 
 #from pprint import pprint as print
-
 import bali
 
 fp = bali.FileParser()
