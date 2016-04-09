@@ -16,17 +16,6 @@ Starting with hypothesis that only high strokes (e and o) are being analyzed
 What percentage of Lanang and Wadon is on and off the beat? 
 '''
 
-lanangPatterns = []
-wadonPatterns = []
-for p in fp.taught:
-    if p.drumType == 'Lanang':
-        lanangPatterns.append(p)
-    elif p.drumType == 'Wadon':
-        wadonPatterns.append(p)
-
-lan = lanangPatterns[0:10]
-wad = wadonPatterns[0:22]
-
 def percentOnBeat(pattern, typeOfStroke = 'e'):
     '''
     Returns percent of a certain type of stroke that occurs on the beat
@@ -52,29 +41,41 @@ def percentOnBeatTaught(pattern, typeOfStroke = 'e'):
     >>> from music21 import *
     >>> import bali
     >>> fp = bali.FileParser()
-    >>> pattern = fp.taught[0]
+    >>> pattern = fp.taught[1]
     >>> percentOnBeatTaught(pattern, 'e')
-    100
+    85.71428571428571
     '''
     totalPercent = 0
     strokesCounted = 0
     strokesOfType = pattern.drumPattern.count(typeOfStroke)
     strokesCounted += strokesOfType
+    print(pattern.drumPattern)
     totalPercent += percentOnBeat(pattern, typeOfStroke) * strokesOfType
     if strokesCounted == 0:
         return 0
     return totalPercent / strokesCounted
-
-print('percentOnBeatTaught Lanang')
-print(percentOnBeatTaught(lan, 'e'))
-print('percentOnBeatTaught Wadon')
-print(percentOnBeatTaught(wad, 'o'))
 
 def percentOnBeatTaughtList(listOfPatterns, typeOfStroke = 'e'):
     '''
     Returns percent on beat for a certain type of stroke for every pattern in
     a list of patterns. Organized as a dictionary with pattern as key and 
     percent on beat as value
+    
+    >>> lanangPatterns = []
+    >>> wadonPatterns = []
+    >>> for p in fp.taught:
+    >>>     if p.drumType == 'Lanang':
+    >>>         lanangPatterns.append(p)
+    >>>     elif p.drumType == 'Wadon':
+    >>>         wadonPatterns.append(p)
+
+    >>> lan = lanangPatterns[0:10]
+    >>> wad = wadonPatterns[0:22]
+    
+    >>> import bali
+    >>> fp = bali.FileParser()
+    >>> percentOnBeatTaughtList(lan, 'e')
+    93
     '''
     percents = {}
     for pattern in listOfPatterns:
@@ -110,11 +111,6 @@ def separateSingleConsecutiveStrokes(listOfPatterns, typeOfStroke = 'e'):
     
     return ('Patterns with only single strokes:', singleStrokePatterns, percentOnBeatSingle,
            'Patterns with consecutive strokes', doubleStrokePatterns, percentOnBeatDouble)
-
-print('separateSingleConsecutiveStrokes Lanang')
-print(separateSingleConsecutiveStrokes(lan, 'e'))
-print('separateSingleConsecutiveStrokes Wadon')
-print(separateSingleConsecutiveStrokes(wad, 'o'))
 
 '''
 Take out double strokes of a certain type
@@ -165,10 +161,6 @@ def percentOnBeatDoublesRemovedList(listOfPatterns, typeOfStroke = 'e'):
         percents[pattern] = percent
     return percents
     
-print('removeDoubleStrokes Lanang')
-print(removeDoubleStrokes(lan, 'e'))
-print('removeDoubleStrokes Wadon')
-print(removeDoubleStrokes(wad, 'o'))
 
 if __name__ == '__main__':
     import sys
