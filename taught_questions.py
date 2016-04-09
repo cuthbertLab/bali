@@ -13,7 +13,7 @@ Starting with hypothesis that only high strokes (e and o) are being analyzed
 '''
 
 '''
-What percentage of Lanang and Wadon is on and off the beat?
+What percentage of Lanang and Wadon is on and off the beat? 
 '''
 
 lanangPatterns = []
@@ -27,14 +27,14 @@ for p in fp.taught:
 lan = lanangPatterns[0:10]
 wad = wadonPatterns[0:22]
 
-def percentOnBeat(listOfPatterns, typeOfStroke = 'e'):
+def percentOnBeat(pattern, typeOfStroke = 'e'):
     '''
     Returns percent of a certain type of stroke that occurs on the beat
     Helper function for percentOnBeatTaught
     '''
     numberOnBeat = 0
     numberOfStroke = 0
-    for beat, stroke in listOfPatterns.iterateStrokes():
+    for beat, stroke in pattern.iterateStrokes():
         if stroke != typeOfStroke:
             continue
         numberOfStroke += 1
@@ -45,27 +45,22 @@ def percentOnBeat(listOfPatterns, typeOfStroke = 'e'):
         return 0
     return (numberOnBeat * 100) / numberOfStroke
 
-def percentOnBeatTaught(listOfPatterns, typeOfStroke = 'e'):
+def percentOnBeatTaught(pattern, typeOfStroke = 'e'):
     '''
     Returns percent of a certain type of stroke that occurs on the beat
-
     Double counts end and beginning of each pattern
-
     >>> from music21 import *
     >>> import bali
     >>> fp = bali.FileParser()
-    >>> pattern = lanangPatterns[0:2]
+    >>> pattern = fp.taught[0]
     >>> percentOnBeatTaught(pattern, 'e')
-    93.75
+    100
     '''
-    global lanangPatterns, wadonPatterns
-
     totalPercent = 0
     strokesCounted = 0
-    for pattern in listOfPatterns:
-        strokesOfType = pattern.drumPattern.count(typeOfStroke)
-        strokesCounted += strokesOfType
-        totalPercent += percentOnBeat(pattern, typeOfStroke) * strokesOfType
+    strokesOfType = pattern.drumPattern.count(typeOfStroke)
+    strokesCounted += strokesOfType
+    totalPercent += percentOnBeat(pattern, typeOfStroke) * strokesOfType
     if strokesCounted == 0:
         return 0
     return totalPercent / strokesCounted
@@ -75,6 +70,17 @@ print(percentOnBeatTaught(lan, 'e'))
 print('percentOnBeatTaught Wadon')
 print(percentOnBeatTaught(wad, 'o'))
 
+def percentOnBeatTaughtList(listOfPatterns, typeOfStroke = 'e'):
+    '''
+    Returns percent on beat for a certain type of stroke for every pattern in
+    a list of patterns. Organized as a dictionary with pattern as key and 
+    percent on beat as value
+    '''
+    percents = {}
+    for pattern in listOfPatterns:
+        percent = percentOnBeatTaught(pattern, typeOfStroke)
+        percents[pattern] = percent
+    return percents
 '''
 Figure out if this "Lanang on beat, Wadon off beat" hypothesis doesn't hold with double strokes
 '''
@@ -85,7 +91,6 @@ def separateSingleConsecutiveStrokes(listOfPatterns, typeOfStroke = 'e'):
     Returns percent of a certain type of stroke that occurs on the beat for these two types
     of patterns
     Should handle triple/quadruple strokes (doesn't occur in taught)
-       
     '''
     singleStrokePatterns = []
     doubleStrokePatterns = []
@@ -115,7 +120,7 @@ print(separateSingleConsecutiveStrokes(wad, 'o'))
 Take out double strokes of a certain type
 '''
 
-def removeDoubleStrokes(listOfPatterns, typeOfStroke = 'e'):
+def removeDoubleStrokes(pattern, typeOfStroke = 'e'):
     '''
     Returns list of drum patterns (as lists) with first stroke of a double stroke of a given type removed.
     Should handle triple/quadruple strokes (don't occur in taught patterns)
@@ -125,58 +130,46 @@ def removeDoubleStrokes(listOfPatterns, typeOfStroke = 'e'):
     >>> from music21 import *
     >>> import bali
     >>> fp = bali.FileParser()
-    >>> pattern = lanangPatterns[0:2]
-    >>> removeDoubleStrokes(pattern, 'e')
-    [['e',
-      '_',
-      'e',
-      '_',
-      'e',
-      '_',
-      'e',
-      '_',
-      'e',
-      '_',
-      'e',
-      '_',
-      'e',
-      '_',
-      'e',
-      '_',
-      'e'],
-     ['_',
-      '_',
-      '_',
-      '.',
-      'e',
-      '_',
-      'e',
-      '_',
-      'e',
-      '_',
-      'e',
-      '_',
-      'e',
-      '_',
-      'e',
-      'T',
-      '_']]
+    >>> pattern = fp.taught[0]
+    >>> allRemoved = removeDoubleStrokes(pattern, 'e')
+    >>> type(allRemoved) is list
+    True
+    >>> len(allRemoved)
+    2
+    >>> firstRemoved = allRemoved[0]
+    >>> ''.join(firstRemoved)
+    'e_e_e_e_e_e_e_e_e'
     '''
     strokesWithConsecutivesRemoved = []
-    for pattern in listOfPatterns:
-        newDrumPattern = pattern.strokes
-        repeatedStrokes = []
-        for i in range(1, len(pattern.strokes) - 1):
-            if pattern.strokes[i] == pattern.strokes[i + 1] and pattern.strokes[i] == typeOfStroke:
-                newDrumPattern[i] = '.'
-        strokesWithConsecutivesRemoved.append(newDrumPattern)
+    newDrumPattern = pattern.strokes
+    for i in range(1, len(pattern.strokes) - 1):
+        if pattern.strokes[i] == pattern.strokes[i + 1] and pattern.strokes[i] == typeOfStroke:
+            newDrumPattern[i] = '.'
+    strokesWithConsecutivesRemoved.append(newDrumPattern)
     return strokesWithConsecutivesRemoved
 
+def percentOnBeatDoublesRemoved(pattern, typeOfStroke = 'e'):
+    patternDoublesRemoved = removeDoubleStrokes(pattern, typeOfStroke = 'e')
+    percent = percentOnBeatTaught(patternDoublesRemoved, typeOfStroke = 'e')
+    return percent
+
+def percentOnBeatDoublesRemovedList(listOfPatterns, typeOfStroke = 'e'):
+    '''
+    Returns percent on beat for a certain type of stroke for every pattern in
+    a list of patterns, with only the second stroke counted in double strokes.
+    Organized as a dictionary with pattern as key and percent on beat as value
+    '''
+    percents = {}
+    for pattern in listOfPatterns:
+        percent = percentOnBeatDoublesRemoved(pattern, typeOfStroke)
+        percents[pattern] = percent
+    return percents
+    
 print('removeDoubleStrokes Lanang')
 print(removeDoubleStrokes(lan, 'e'))
 print('removeDoubleStrokes Wadon')
 print(removeDoubleStrokes(wad, 'o'))
-   
+
 if __name__ == '__main__':
     import sys
     sys.path.append('/Users/Katherine1/git/music21/')
