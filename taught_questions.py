@@ -207,7 +207,7 @@ def percentOnBeatConsecutivesRemovedList(listOfPatterns, typeOfStroke = 'e'):
                 lanangPatterns.append(p)
             elif p.drumType == 'Wadon':
                 wadonPatterns.append(p)
-    >>> percentOnBeatTaughtList(lan, 'e')['(_)_ _ e e T _ _ _ e e T e T e T _']
+    >>> percentOnBeatConsecutivesRemovedList(lan, 'e')['(_)_ _ e e T _ _ _ e e T e T e T _']
     100.0
     '''
     percents = {}
@@ -215,8 +215,24 @@ def percentOnBeatConsecutivesRemovedList(listOfPatterns, typeOfStroke = 'e'):
         percent = percentOnBeatConsecutivesRemoved(pattern, typeOfStroke)
         percents[pattern] = percent
     return percents
+
 print(percentOnBeatConsecutivesRemovedList(lanangPatterns, 'e'))
-    
+
+def totalPercentOnBeatConsecutivesRemoved(listOfPatterns, typeOfStroke = 'e'):
+    '''
+    Returns percent on beat for a certain type of stroke for all patterns in
+    a list of patterns, with only the second stroke counted in double strokes.
+    '''
+    percent = 0
+    strokesCounted = 0
+    patternDict = percentOnBeatConsecutivesRemovedList(listOfPatterns, typeOfStroke)
+    for k in patternDict.keys():
+        strokesOfType = k.drumPattern.count(typeOfStroke)
+        strokesCounted += strokesOfType
+        percent += patternDict[k] * strokesOfType
+    return percent / strokesCounted
+print(totalPercentOnBeatConsecutivesRemoved(lanangPatterns, typeOfStroke = 'e'))
+
 if __name__ == '__main__':
     import sys
     sys.path.append('/Users/Katherine1/git/music21/')
