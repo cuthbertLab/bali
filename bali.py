@@ -405,16 +405,6 @@ class FileParser(object):
             self.parseTaught(self.fileReader.taught)
             return self.taughtPatterns
 
-    def separatePatternsByDrum(self):
-        lanangPatterns = []
-        wadonPatterns = []
-        for p in self.taught:
-            if p.drumType == 'Lanang':
-                lanangPatterns.append(p)
-            elif p.drumType == 'Wadon':
-                wadonPatterns.append(p)
-        return lanangPatterns, wadonPatterns
-
     @property
     def transcribed(self):
         if self.transcribedPatterns:
@@ -462,6 +452,7 @@ class FileParser(object):
                 currentDrumPattern = line
             else:
                 currentComments = line
+
         
     def parseTranscribed(self, lineList):
         '''
