@@ -4,7 +4,17 @@ from __future__ import print_function, division
 import bali
 
 fp = bali.FileParser()
-  
+
+def separatePatternsByDrum():
+    lanangPatterns = []
+    wadonPatterns = []
+    for p in fp.taught:
+        if p.drumType == 'Lanang':
+            lanangPatterns.append(p)
+        elif p.drumType == 'Wadon':
+            wadonPatterns.append(p)
+    return lanangPatterns, wadonPatterns
+
 '''
 Try to prove hypothesis that Lanang strokes are on the beat and Wadon strokes
 are off the beat
@@ -67,14 +77,9 @@ def percentOnBeatTaughtList(listOfPatterns, typeOfStroke = 'e'):
     Returns percent on beat for a certain type of stroke for every pattern in
     a list of patterns. Organized as a dictionary with pattern as key and 
     percent on beat as value
-    >>> lanangPatterns = []
-    >>> wadonPatterns = []
-    >>> for p in fp.taught:
-            if p.drumType == 'Lanang':
-                lanangPatterns.append(p)
-            elif p.drumType == 'Wadon':
-                wadonPatterns.append(p)
-    >>> percentOnBeatTaughtList(lan, 'e')['(l)_ e _ l _ e _ l _ e _ l _ e T l']
+    >>> import bali
+    >>> from music21 import *
+    >>> percentOnBeatTaughtList(fp.separatePatternsByDrum()[0], 'e')['(l)_ e _ l _ e _ l _ e _ l _ e T l']
     100.0
     '''
     percents = {}
@@ -200,14 +205,10 @@ def percentOnBeatConsecutivesRemovedList(listOfPatterns, typeOfStroke = 'e'):
     Returns percent on beat for a certain type of stroke for every pattern in
     a list of patterns, with only the second stroke counted in double strokes.
     Organized as a dictionary with pattern as key and percent on beat as value
-    >>> lanangPatterns = []
-    >>> wadonPatterns = []
-    >>> for p in fp.taught:
-            if p.drumType == 'Lanang':
-                lanangPatterns.append(p)
-            elif p.drumType == 'Wadon':
-                wadonPatterns.append(p)
-    >>> percentOnBeatConsecutivesRemovedList(lan, 'e')['(_)_ _ e e T _ _ _ e e T e T e T _']
+    >>> import bali
+    >>> from music21 import *
+    >>> fp = bali.FileParser()
+    >>> percentOnBeatConsecutivesRemovedList(fp.separatePatternsByDrum()[0], 'e')['(_)_ _ e e T _ _ _ e e T e T e T _']
     100.0
     '''
     percents = {}
@@ -234,7 +235,5 @@ def totalPercentOnBeatConsecutivesRemoved(listOfPatterns, typeOfStroke = 'e'):
 print(totalPercentOnBeatConsecutivesRemoved(lanangPatterns, typeOfStroke = 'e'))
 
 if __name__ == '__main__':
-    import sys
-    sys.path.append('/Users/Katherine1/git/music21/')
     import music21
     music21.mainTest()
