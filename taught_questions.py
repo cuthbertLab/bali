@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from __future__ import print_function, absolute_import, division
 
 #from pprint import pprint as print
@@ -21,7 +23,7 @@ def percentOnBeat(pattern, typeOfStroke = 'e'):
     >>> import bali, taught_questions
     >>> fp = bali.FileParser()
     >>> pattern = fp.taught[1]
-    >>> percentOnBeat(pattern, 'e')
+    >>> taught_questions.percentOnBeat(pattern, 'e')
     85.71428571428571
     '''
     numberOnBeat = 0
@@ -42,10 +44,11 @@ def percentOnBeatTaught(pattern, typeOfStroke = 'e'):
     '''
     Returns percent of a certain type of stroke that occurs on the beat
     Double counts end and beginning of each pattern
+    
     >>> import bali, taught_questions
     >>> fp = bali.FileParser()
     >>> pattern = fp.taught[1]
-    >>> percentOnBeatTaught(pattern, 'e')
+    >>> taught_questions.percentOnBeatTaught(pattern, 'e')
     85.71428571428571
     '''
     totalPercent = 0
@@ -63,10 +66,12 @@ def percentOnBeatTaughtList(listOfPatterns, typeOfStroke = 'e'):
     Returns percent on beat for a certain type of stroke for every pattern in
     a list of patterns. Organized as a dictionary with pattern as key and 
     percent on beat as value
+    
     >>> import bali, taught_questions
     >>> fp = bali.FileParser()
     >>> lanangPatterns = fp.separatePatternsByDrum()[0]
-    >>> percentOnBeatTaughtList(lanangPatterns, 'e')['(l)_ e _ l _ e _ l _ e _ l _ e T l']
+    >>> returnedDict = taught_questions.percentOnBeatTaughtList(lanangPatterns, 'e')
+    >>> returnedDict['(l)_ e _ l _ e _ l _ e _ l _ e T l']
     100.0
     '''
     percents = {}
@@ -91,10 +96,11 @@ Figure out if this "Lanang on beat, Wadon off beat" hypothesis doesn't hold with
 def singleStrokes(listOfPatterns, typeOfStroke = 'e'):
     '''
     Finds patterns that only have single strokes for the type of stroke and returns them in a list
+    
     >>> import bali, taught_questions
     >>> fp = bali.FileParser()
     >>> lanangPatterns = fp.separatePatternsByDrum()[0]
-    >>> len(singleStrokes(lanangPatterns, 'e'))
+    >>> len(taught_questions.singleStrokes(lanangPatterns, 'e'))
     5
     '''
     singleStrokePatterns = []
@@ -111,10 +117,11 @@ def singleStrokes(listOfPatterns, typeOfStroke = 'e'):
 def consecutiveStrokes(listOfPatterns, typeOfStroke = 'e'):
     '''
     Finds patterns that only have single strokes for the type of stroke and returns them in a list
+    
     >>> import bali, taught_questions
     >>> fp = bali.FileParser()
     >>> lanangPatterns = fp.separatePatternsByDrum()[0]
-    >>> len(consecutiveStrokes(lanangPatterns, 'e'))
+    >>> len(taught_questions.consecutiveStrokes(lanangPatterns, 'e'))
     36
     '''
     doubleStrokePatterns = []
@@ -136,10 +143,11 @@ def removeConsecutiveStrokes(pattern, typeOfStroke = 'e'):
     Returns drum pattern with first stroke of a double stroke of a given type removed.
     
     The first stroke of a double stroke is replaced with '.'
+    
     >>> import bali, taught_questions
     >>> fp = bali.FileParser()
     >>> pattern = fp.taught[0]
-    >>> removed = removeConsecutiveStrokes(pattern, 'e')
+    >>> removed = taught_questions.removeConsecutiveStrokes(pattern, 'e')
     >>> ''.join(removed)
     'e_e_e_e_e_e_e_e_e'
     '''
@@ -157,7 +165,7 @@ def percentOnBeatConsecutivesRemoved(pattern, typeOfStroke = 'e'):
     >>> import bali, taught_questions
     >>> fp = bali.FileParser()
     >>> pattern = fp.taught[25]
-    >>> percentOnBeatConsecutivesRemoved(pattern, 'e')
+    >>> taught_questions.percentOnBeatConsecutivesRemoved(pattern, 'e')
     80.0
     '''
     patternConsecutivesRemoved = removeConsecutiveStrokes(pattern, typeOfStroke = 'e')
@@ -190,10 +198,12 @@ def percentOnBeatConsecutivesRemovedList(listOfPatterns, typeOfStroke = 'e'):
     Returns percent on beat for a certain type of stroke for every pattern in
     a list of patterns, with only the second stroke counted in double strokes.
     Organized as a dictionary with pattern as key and percent on beat as value
+    
     >>> import bali, taught_questions
     >>> fp = bali.FileParser()
     >>> lanangPatterns = fp.separatePatternsByDrum()[0]
-    >>> percentOnBeatConsecutivesRemovedList(lanangPatterns, 'e')['(_)_ _ e e T _ _ _ e e T e T e T _']
+    >>> outDict = taught_questions.percentOnBeatConsecutivesRemovedList(lanangPatterns, 'e')
+    >>> outDict['(_)_ _ e e T _ _ _ e e T e T e T _']
     100.0
     '''
     percents = {}

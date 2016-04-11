@@ -19,7 +19,7 @@ import re
 #import weakref
 import unittest
 
-import music21
+import music21 # @UnresolvedImport
 
 class BaliException(Exception):
     pass
@@ -428,7 +428,7 @@ class FileParser(object):
         Takes a list of lines from a file and an empty list [] and fills that
         list with Taught objects.
         '''
-        currentTitle = ""
+        currentTitle = None
         currentGongPattern = None
         currentDrumPattern = None
         currentComments = None
@@ -800,6 +800,16 @@ class DualDrummer(PatternHolder):
 ###### Tests
 
 class Test(unittest.TestCase):
+    def testWhyDoesFirstTaughtFail(self):
+        import bali
+        
+        fp = bali.FileParser()
+        pattern = fp.taught[0]
+        self.assertEqual(''.join(pattern.drumPattern), '(e)_ e _ e _ e _ e _ e _ e _ e _ e')
+    
+        # make sure we end with Wadon variant 3
+        lastPattern = fp.taught[-1]
+        self.assertEqual(lastPattern.title, 'Pak Tama Wadon Variant 3')
     
     def xtestDrumTypeInfer(self):
         import bali
