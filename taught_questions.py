@@ -2,6 +2,8 @@
 
 from __future__ import print_function, absolute_import, division
 
+import copy
+
 #from pprint import pprint as print
 import bali
 fp = bali.FileParser()
@@ -20,11 +22,12 @@ def percentOnBeat(pattern, typeOfStroke='e'):
     '''
     Returns percent of a certain type of stroke that occurs on the beat
     Helper function for percentOnBeatTaught
+    
     >>> import bali, taught_questions
     >>> fp = bali.FileParser()
     >>> pattern = fp.taught[1]
     >>> taught_questions.percentOnBeat(pattern, 'e')
-    85.71428571428571
+    85.7...
     '''
     numberOnBeat = 0
     numberOfStroke = 0
@@ -49,7 +52,7 @@ def percentOnBeatTaught(pattern, typeOfStroke='e'):
     >>> fp = bali.FileParser()
     >>> pattern = fp.taught[1]
     >>> taught_questions.percentOnBeatTaught(pattern, 'e')
-    85.71428571428571
+    85.7...
     '''
     totalPercent = 0
     strokesCounted = 0
@@ -114,21 +117,34 @@ def singleStrokes(listOfPatterns, typeOfStroke='e'):
             singleStrokePatterns.append(pattern)
     return singleStrokePatterns
 
-def consecutiveStrokes(listOfPatterns, typeOfStroke='e'):
+def consecutiveStrokes(listOfPatterns, typeOfStroke='eo'):
     '''
     Finds patterns that only have single strokes for the type of stroke and returns them in a list
     
     >>> import bali, taught_questions
     >>> fp = bali.FileParser()
-    >>> lanangPatterns = fp.separatePatternsByDrum()[0]
+    >>> lanangPatterns, wadonPatterns = fp.separatePatternsByDrum()
     >>> len(taught_questions.consecutiveStrokes(lanangPatterns, 'e'))
     36
+    >>> len(taught_questions.consecutiveStrokes(lanangPatterns, 'Tl'))
+    2
+    >>> len(taught_questions.consecutiveStrokes(wadonPatterns, 'o'))
+    15
+    
+    Default is to check for either e or o
+    
+    >>> len(taught_questions.consecutiveStrokes(wadonPatterns, 'eo'))
+    15
+    >>> len(taught_questions.consecutiveStrokes(wadonPatterns))
+    15
     '''
     doubleStrokePatterns = []
     for pattern in listOfPatterns:
         doubleStrokes = 0
         strokes = list(pattern.drumPattern.replace(' ', ''))
         for i in range(len(strokes) - 1):
+            if strokes[i] not in typeOfStroke:
+                continue
             if strokes[i] == strokes[i + 1] and strokes[i] != '_':
                 doubleStrokes += 1
         if doubleStrokes > 0:
@@ -138,7 +154,7 @@ def consecutiveStrokes(listOfPatterns, typeOfStroke='e'):
 # print(singleStrokes(lanangPatterns, 'e'))
 # print(consecutiveStrokes(lanangPatterns, 'e'))
 
-def removeConsecutiveStrokes(pattern, typeOfStroke='e'):
+def removeConsecutiveStrokes(pattern, typeOfStroke='e', removeFirst=True, removeSecond=False):
     '''
     Returns drum pattern with first stroke of a double stroke of a given type removed.
     
@@ -146,15 +162,46 @@ def removeConsecutiveStrokes(pattern, typeOfStroke='e'):
     
     >>> import bali, taught_questions
     >>> fp = bali.FileParser()
-    >>> pattern = fp.taught[0]
+    >>> pattern = fp.taught[4]
+    >>> pattern
+    <bali.Taught Pak Dewa Lanang 10:(_)e e T e _ _ _ _ e e _ e _ e _ _>
+    
     >>> removed = taught_questions.removeConsecutiveStrokes(pattern, 'e')
-    >>> ''.join(removed)
-    'e_e_e_e_e_e_e_e_e'
+    >>> removed
+    <bali.Taught Pak Dewa Lanang 10:(_). e T e _ _ _ _ . e _ e _ e _ _>
+    >>> taught_questions.percentOnBeatTaught(removed, 'e')
+    100.0
+
+    >>> removed2 = taught_questions.removeConsecutiveStrokes(pattern, 'e', removeSecond=True)
+    >>> removed2
+    <bali.Taught Pak Dewa Lanang 10:(_). . T e _ _ _ _ . . _ e _ e _ _>
+
+
+    Not appearing in the repertoire except by mistake, but for completeness sake
+    the name of this method is correct.  It removes all but the last even
+    in cases where there are three or more in a row, unless removeSecond is True
+
+    >>> pattern = fp.taught[4]
+    >>> pattern.drumPattern = '(_)e e T e _ _ _ _ e e e _ _ e _ _'
+    >>> removed = taught_questions.removeConsecutiveStrokes(pattern, 'e')
+    >>> removed
+    <bali.Taught Pak Dewa Lanang 10:(_). e T e _ _ _ _ . . e _ _ e _ _>
+    
+    TODO: Leslie -- how to deal with across a repetition boundary
     '''
-    newDrumPattern = pattern.strokes
+    newDrumPatternList = copy.deepcopy(pattern.strokes)
     for i in range(1, len(pattern.strokes) - 1):
         if pattern.strokes[i] == pattern.strokes[i + 1] and pattern.strokes[i] == typeOfStroke:
-            newDrumPattern[i] = '.'
+            # this is part of the double stroke list...
+            if removeFirst is True:
+                newDrumPatternList[i] = '.'
+            # todo: how to mark the next one to be removed if we are removing both.
+            if removeSecond is True:
+                newDrumPatternList[i+1] = '.'
+
+    newDrumPattern = copy.deepcopy(pattern)
+    newDrumPattern.strokes = newDrumPatternList
+    
     return newDrumPattern
 # print(removeConsecutiveStrokes(fp.taught[1], 'e'))
 
@@ -168,16 +215,19 @@ def percentOnBeatConsecutivesRemoved(pattern, typeOfStroke='e'):
     >>> taught_questions.percentOnBeatConsecutivesRemoved(pattern, 'e')
     80.0
     '''
+    
     patternConsecutivesRemoved = removeConsecutiveStrokes(pattern, typeOfStroke='e')
+    patternStrokes = patternConsecutivesRemoved.strokes
     totalPercent = 0
     strokesCounted = 0
-    strokesOfType = patternConsecutivesRemoved.count(typeOfStroke)
+    strokesOfType = patternStrokes.count(typeOfStroke)
     strokesCounted += strokesOfType
+    
     
     numberOnBeat = 0
     numberOfStroke = 0
-    for i in range(len(patternConsecutivesRemoved)):
-        if patternConsecutivesRemoved[i] != typeOfStroke:
+    for i in range(len(patternStrokes)):
+        if patternStrokes[i] not in typeOfStroke:
             continue
         numberOfStroke += 1
         if (i) % 2 == 0:

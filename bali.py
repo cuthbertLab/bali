@@ -57,11 +57,9 @@ class Pattern(object):
         self.comments = ""
         self.indexInFile = -1 # -1 means undefined. otherwise 0 to ...
         self.fileParser = None # the FileParser object.
-    
-    @property
-    def strokes(self):
+        
+    def _getStrokes(self):
         '''
-        >>> from music21 import *
         >>> import bali
         >>> fp = bali.FileParser()
         >>> pattern = fp.taught[1]
@@ -74,7 +72,45 @@ class Pattern(object):
         dpReal = dp[3:]
         postBeatZeroStrokes = dpReal.split()
         allStrokes = [beatZero] + postBeatZeroStrokes
+
         return allStrokes
+
+    def _setStrokes(self, newStrokes):
+        '''
+        >>> import bali
+        >>> fp = bali.FileParser()
+        >>> pattern = fp.taught[1]
+        >>> pattern.drumPattern
+        '(_)_ _ e e _ e _ e _ e _ e _ e T _'
+        >>> st = pattern.strokes
+        >>> st
+        ['_', '_', '_', 'e', 'e', '_', 'e', '_', 'e', '_', 'e', '_', 'e', '_', 'e', 'T', '_']
+        >>> st[1] = 'T'
+        
+        >>> import copy
+        >>> patternCopy = copy.deepcopy(pattern)
+        >>> patternCopy.strokes = st
+        >>> patternCopy.drumPattern
+        '(_)T _ e e _ e _ e _ e _ e _ e T _'
+
+        Double check we did not change the original:
+        
+        >>> pattern.drumPattern
+        '(_)_ _ e e _ e _ e _ e _ e _ e T _'
+        >>> st = pattern.strokes
+        >>> st
+        ['_', '_', '_', 'e', 'e', '_', 'e', '_', 'e', '_', 'e', '_', 'e', '_', 'e', 'T', '_']
+        
+        '''
+        beatZeroStroke = newStrokes[0]
+        normalStrokes = newStrokes[1:]
+        newDrumPatternNormalPart = ' '.join(normalStrokes)
+        newDrumPatternAll = '(' + beatZeroStroke + ')' + newDrumPatternNormalPart
+        self.drumPattern = newDrumPatternAll
+        
+    strokes = property(_getStrokes, _setStrokes, doc='''
+        Gets or sets the list of Strokes.
+    ''')
 
     def beatLength(self):
         '''
