@@ -8,7 +8,7 @@ Pak Tama Lanang 0 (intro)
 (_)_ _ e e _ e _ e _ e _ e _ e T _
 
 
-Pak Cok Lanang 0 (“intro”)
+Pak Cok Lanang 0 ("intro")
 (4)- ● - 1 - ● - 2 - ● - 3 - ● – 4
 (_)_ _ e e T e T e T e T e T e T _
 
@@ -41,9 +41,11 @@ Pak Dewa Lanang 7
 (4)- ● - 1 - ● - 2 - ● - 3 - ● – 4 
 (l)_ e _ l _ e _ l _ e _ l _ e T l
 
+
 Pak Dewa Lanang 8
 (4)- ● - 1 - ● - 2 - ● - 3 - ● – 4 
 (l)_ e T l _ e T l _ e T l _ e T l
+
 
 Pak Dewa Lanang 6a
 (4)- ● - 1 - ● - 2 - ● - 3 - ● – 4
@@ -79,6 +81,7 @@ Pak Dewa Lanang 1b (Tama)
 (4)- ● - 1 - ● - 2 - ● - 3 - ● – 4 
 (_)_ _ _ _ e e T _ e _ e _ e e T _
 
+
 Pak Tama Lanang 3
 (4)- ● - 1 - ● - 2 - ● - 3 - ● – 4 
 (_)_ _ _ _ e e _ _ e _ e _ e e _ _
@@ -87,6 +90,7 @@ Pak Tama Lanang 3
 Sudi Lanang 1
 (4)- ● - 1 - ● - 2 - ● - 3 - ● – 4 
 (_)_ _ _ _ e e _ _ _ _ _ _ e e T _ 
+
 
 Sudi Lanang 3
 (4)- ● - 1 - ● - 2 - ● - 3 - ● – 4
@@ -112,6 +116,7 @@ Pak Dewa Lanang 4
 (4)- ● - 1 - ● - 2 - ● - 3 - ● – 4 
 (_)_ e _ _ e e _ _ e _ l _ e e T _ 
 
+
 Pak Tama Lanang 4
 (4)- ● - 1 - ● - 2 - ● - 3 - ● – 4 
 (_)_ _ _ _ e e _ _ e _ e e T e T _
@@ -120,6 +125,7 @@ Pak Tama Lanang 4
 Pak Dewa Lanang 2
 (4)- ● - 1 - ● - 2 - ● - 3 - ● – 4
 (_)e _ l _ e e T _ e e T e T e T r
+
 
 Pak Dewa Lanang 2a
 (4)- ● - 1 - ● - 2 - ● - 3 - ● – 4
@@ -180,6 +186,7 @@ Pak Dewa Lanang 5
 (4)- ● - 1 - ● - 2 - ● - 3 - ● – 4 
 (_)e e t T e T e e t T e e T e T _
 
+
 Pak Tama Lanang 2
 (4)- ● - 1 - ● - 2 - ● - 3 - ● – 4 
 (_)e e t T e T e e T e T _ e e T _
@@ -188,6 +195,7 @@ Pak Tama Lanang 2
 Pak Cok Lanang 6 (not taught)
 (4)- ● - 1 - ● - 2 - ● - 3 - ● – 4
 (_)e _ e e T _ e _ e e T e T e T _
+
 
 Pak Cok Lanang 7 (not taught)
 (4)- ● - 1 - ● - 2 - ● - 3 - ● – 4
@@ -210,6 +218,7 @@ Pak Tama Wadon Variant 1
 (4)- ● - 1 - ● - 2 - ● - 3 - ● – 4
 (_)_ _ o _ l _ l _ o _ l _ o _ o _
 
+
 Pak Tama Wadon Variant 1a
 (4)- ● - 1 - ● - 2 - ● - 3 - ● – 4
 (_)_ _ o _ l _ l _ o _ l _ o _ l _
@@ -219,9 +228,11 @@ Pak Dewa Wadon 3
 (4)- ● - 1 - ● - 2 - ● - 3 - ● – 4
 (o)d D _ D _ D _ _ o _ o _ o _ o _
 
+
 Pak Dewa Wadon End Variant
 (4)- ● - 1 - ● - 2 - ● - 3 - ● – 4
 (o)D o d D _ _ _ _ _ _ o _ o _ o _
+
 
 Pak Tama Wadon 0 (intro)
 (4)- ● - 1 - ● - 2 - ● - 3 - ● – 4
@@ -237,6 +248,7 @@ Pak Dewa Wadon 0a with Dag delay:
 (4)- ● - 1 - ● - 2 - ● - 3 - ● – 4
 (o)_ _ o _ l _ o o _ _ o d D _ o o
 
+
 Pak Tama Wadon Variant 2:
 (4)- ● - 1 - ● - 2 - ● - 3 - ● – 4
 (_)l _ o _ l _ l _ o _ o o d D _ _
@@ -251,9 +263,11 @@ Pak Dewa Wadon 2
 (4)- ● - 1 - ● - 2 - ● - 3 - ● – 4
 (o)_ _ o d D _ o d D _ o d D _ o o
 
+
 Pak Dewa Wadon 4
 (4)- ● - 1 - ● - 2 - ● - 3 - ● – 4
 (o)D _ o d D _ o d D _ D _ D _ o o
+
 
 Pak Dewa Wadon 1
 (4)- ● - 1 - ● - 2 - ● - 3 - ● – 4
@@ -265,7 +279,6 @@ Pak Tama Wadon Variant 6:
 (o)D _ o _ o o D _ o o d D _ _ _ _
 Only used as second-half of eight-beat pattern
 
-
 Pak Tama Wadon Variant 2:
 (4)- ● - 1 - ● - 2 - ● - 3 - ● – 4
 (o)D _ o _ o o D _ o o d D _ _ _ _
@@ -274,6 +287,7 @@ Pak Tama Wadon Variant 2:
 Pak Dewa Wadon 5
 (4)- ● - 1 - ● - 2 - ● - 3 - ● – 4 
 (o)D o d D o D o o D o d D o D o o
+
 
 Pak Dewa Wadon 6
 (4)- ● - 1 - ● - 2 - ● - 3 - ● – 4
