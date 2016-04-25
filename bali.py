@@ -19,6 +19,7 @@ import re
 #import weakref
 import unittest
 import copy
+import enum
 
 import music21 # @UnresolvedImport
 
@@ -27,6 +28,15 @@ class BaliException(Exception):
 
 class IncorrectBeatNumberException(BaliException):
     pass
+
+class BeatLevel(enum.IntEnum):
+    pulse = 1
+    double = 2
+    guntang = 4
+    twoBeat = 8
+    fourBeat = 16
+    
+
 
 class Pattern(object):
     '''
@@ -439,22 +449,29 @@ class Pattern(object):
         else:
             raise IncorrectBeatNumberException("Wrong beat")
         
-    def percentOnBeat(self, typeOfStroke='e'):
+    def percentOnBeat(self, typeOfStroke='e', beatLevel=BeatLevel.double):
         '''
         Returns percent of a certain type of stroke that occurs on the beat
         Helper function for percentOnBeat
         
-        >>> import bali, taught_questions
+        Guntang is every other beat
+        
+        >>> import bali
         >>> fp = bali.FileParser()
         >>> pattern = fp.taught[1]
         >>> pattern.percentOnBeat('e')
         85.7...
-        
-        >>> pattern2 = fp.taught[-1]
-        >>> pattern.percentOnBeat('o')
+        >>> pattern.percentOnBeat('T')
         0.0
         
-        >>> pattern.percentOnBeat('T')
+        >>> pattern2 = fp.taught[-1]
+        >>> pattern2.percentOnBeat('o')
+        40.0
+        >>> pattern2.percentOnBeat('o', bali.BeatLevel.guntang)
+        20.0
+        >>> pattern2.percentOnBeat('o', bali.BeatLevel.twoBeat)
+        20.0
+        >>> pattern2.percentOnBeat('o', bali.BeatLevel.fourBeat)
         0.0
         '''
         numberOnBeat = 0
@@ -463,7 +480,7 @@ class Pattern(object):
             if stroke != typeOfStroke:
                 continue
             numberOfStroke += 1
-            if (beat * 2) % 1 == 0:
+            if (beat * 4/beatLevel) % 1 == 0:
                 numberOnBeat += 1
     
         if numberOfStroke == 0:
