@@ -2,8 +2,6 @@
 
 from __future__ import print_function, absolute_import, division
 
-import copy
-
 #from pprint import pprint as print
 import bali
 fp = bali.FileParser()
@@ -17,8 +15,6 @@ Starting with hypothesis that only high strokes (e and o) are being analyzed
 '''
 What percentage of Lanang and Wadon is on and off the beat? 
 '''
-
-
 
 def percentOnBeatTaughtList(listOfPatterns, typeOfStroke='e'):
     '''
@@ -36,6 +32,8 @@ def percentOnBeatTaughtList(listOfPatterns, typeOfStroke='e'):
     41
     >>> percentlist[1]
     85.7...
+    >>> percentlist[-1]
+    66.6...
     '''
     percents = []
     for i in range(len(listOfPatterns)):
@@ -49,6 +47,7 @@ Figure out if this "Lanang on beat, Wadon off beat" hypothesis doesn't hold with
 def singleStrokes(listOfPatterns, typeOfStroke='e'):
     '''
     Finds patterns that only have single strokes for the type of stroke and returns them in a list
+    
     This method is obsolete
     
     >>> import bali, taught_questions
@@ -71,6 +70,7 @@ def singleStrokes(listOfPatterns, typeOfStroke='e'):
 def consecutiveStrokes(listOfPatterns, typeOfStroke='eo'):
     '''
     Finds patterns that only have single strokes for the type of stroke and returns them in a list
+    
     This method is obsolete
     
     >>> import bali, taught_questions
@@ -175,6 +175,8 @@ def totalPercentOnBeatConsecutivesRemoved(listOfPatterns, typeOfStroke='e'):
     '''
     Returns percent on beat for a certain type of stroke for all patterns in
     a list of patterns, with only the second stroke counted in double strokes.
+    
+    This method is obsolete
     '''
     percent = 0
     strokesCounted = 0

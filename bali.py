@@ -429,6 +429,13 @@ class Pattern(object):
         >>> pattern = fp.taught[1]
         >>> pattern.percentOnBeat('e')
         85.7...
+        
+        >>> pattern2 = fp.taught[-1]
+        >>> pattern.percentOnBeat('o')
+        0.0
+        
+        >>> pattern.percentOnBeat('T')
+        0.0
         '''
         numberOnBeat = 0
         numberOfStroke = 0
@@ -440,7 +447,7 @@ class Pattern(object):
                 numberOnBeat += 1
     
         if numberOfStroke == 0:
-            return 0
+            return 0.0
         return (numberOnBeat * 100) / numberOfStroke
 
     def percentOnBeatTaught(self, typeOfStroke='e'):
@@ -460,7 +467,7 @@ class Pattern(object):
         strokesCounted += strokesOfType
         totalPercent += self.percentOnBeat(typeOfStroke) * strokesOfType
         if strokesCounted == 0:
-            return 0
+            return 0.0
         return totalPercent / strokesCounted
 
     def removeSingleStrokes(self, typeOfStroke='e'):
@@ -470,14 +477,26 @@ class Pattern(object):
     
         >>> import bali, taught_questions
         >>> fp = bali.FileParser()
+        
         >>> pattern = fp.taught[4]
         >>> pattern
         <bali.Taught Pak Dewa Lanang 10:(_)e e T e _ _ _ _ e e _ e _ e _ _>
-        
         >>> removed = pattern.removeSingleStrokes('e')
         >>> removed
         <bali.Taught Pak Dewa Lanang 10:(_)e e T , _ _ _ _ e e _ , _ , _ _>
         >>> removed.percentOnBeatTaught('e')
+        50.0
+        
+        >>> pattern2 = fp.taught[-1]
+        >>> pattern2
+        <bali.Taught Pak Tama Wadon Variant 3:(_)o o D _ _ _ o o D _ d D _ _ o _>
+        >>> removed2 = pattern2.removeSingleStrokes('D')
+        >>> removed2
+        <bali.Taught Pak Tama Wadon Variant 3:(_)o o , _ _ _ o o , _ d , _ _ o _>
+        >>> removed3 = pattern2.removeSingleStrokes('o')
+        >>> removed3
+        <bali.Taught Pak Tama Wadon Variant 3:(_)o o D _ _ _ o o D _ d D _ _ , _>
+        >>> removed3.percentOnBeatTaught('o')
         50.0
         '''
         newDrumPatternList = copy.deepcopy(self.strokes)
@@ -544,6 +563,7 @@ class Pattern(object):
         >>> removedFirstDouble.percentOnBeatTaught('e')
         100.0
         
+        
         Testing removing both double strokes 
         
         >>> removedBothDoubles = removedSingle.removeConsecutiveStrokes('e', removeSecond=True)
@@ -559,6 +579,7 @@ class Pattern(object):
         >>> lanangPatternsCopy[7] = removedFirstDouble
         >>> lanangPatternsCopy[7]
         <bali.Taught Pak Tut Lanang Dasar 2:(_). e _ _ . e _ , _ _ . e T _ T _>
+        
         >>> percentlist = taught_questions.percentOnBeatTaughtList(lanangPatternsCopy, 'e')
         >>> percentlist[7]
         100.0
