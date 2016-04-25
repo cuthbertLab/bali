@@ -73,14 +73,17 @@ def percentOnBeatTaughtList(listOfPatterns, typeOfStroke='e'):
     >>> import bali, taught_questions
     >>> fp = bali.FileParser()
     >>> lanangPatterns = fp.separatePatternsByDrum()[0]
-    >>> returnedDict = taught_questions.percentOnBeatTaughtList(lanangPatterns, 'e')
-    >>> returnedDict['(l)_ e _ l _ e _ l _ e _ l _ e T l']
-    100.0
+    >>> percentlist = taught_questions.percentOnBeatTaughtList(lanangPatterns, 'e')
+    >>> len(lanangPatterns)
+    41
+    >>> len(percentlist)
+    41
+    >>> percentlist[1]
+    85.71...
     '''
-    percents = {}
-    for pattern in listOfPatterns:
-        percent = percentOnBeatTaught(pattern, typeOfStroke)
-        percents[pattern.drumPattern] = percent
+    percents = []
+    for i in range(len(listOfPatterns)):
+        percents.append(percentOnBeatTaught(listOfPatterns[i], typeOfStroke))
     return percents
 
 # lanangPatterns = []
@@ -221,22 +224,37 @@ def removeConsecutiveStrokes(pattern, typeOfStroke='e', removeFirst=True, remove
     >>> pattern2
     <bali.Taught Pak Tut Lanang Dasar 2:(_)e e _ _ e e _ e _ _ e e T _ T _>
     
-    >>> removedsingle = taught_questions.removeSingleStrokes(pattern2, 'e')
-    >>> removedsingle
+    >>> removedSingle = taught_questions.removeSingleStrokes(pattern2, 'e')
+    >>> removedSingle
     <bali.Taught Pak Tut Lanang Dasar 2:(_)e e _ _ e e _ , _ _ e e T _ T _>
     
-    >>> taught_questions.percentOnBeatTaught(removedsingle, 'e')
+    >>> taught_questions.percentOnBeatTaught(removedSingle, 'e')
     50.0
     
-    >>> removedfirstdouble = taught_questions.removeConsecutiveStrokes(removedsingle, 'e')
-    >>> removedfirstdouble
+    >>> removedFirstDouble = taught_questions.removeConsecutiveStrokes(removedSingle, 'e')
+    >>> removedFirstDouble
     <bali.Taught Pak Tut Lanang Dasar 2:(_). e _ _ . e _ , _ _ . e T _ T _>
-    >>> taught_questions.percentOnBeatTaught(removedfirstdouble, 'e')
+    >>> taught_questions.percentOnBeatTaught(removedFirstDouble, 'e')
     100.0
     
-    >>> removedbothdoubles = taught_questions.removeConsecutiveStrokes(removedsingle, 'e', removeSecond=True)
-    >>> removedbothdoubles
+    Testing removing both double strokes 
+    
+    >>> removedBothDoubles = taught_questions.removeConsecutiveStrokes(removedSingle, 'e', removeSecond=True)
+    >>> removedBothDoubles
     <bali.Taught Pak Tut Lanang Dasar 2:(_). . _ _ . . _ , _ _ . . T _ T _>
+    
+    Calling percentOnBeatTaughtList on revised lanangPatterns, with eighth pattern
+    having all single and first double strokes removed
+    
+    >>> import copy
+    >>> lanangPatterns = fp.separatePatternsByDrum()[0]
+    >>> lanangPatternsCopy = copy.deepcopy(lanangPatterns)
+    >>> lanangPatternsCopy[7] = removedFirstDouble
+    >>> lanangPatternsCopy[7]
+    <bali.Taught Pak Tut Lanang Dasar 2:(_). e _ _ . e _ , _ _ . e T _ T _>
+    >>> percentlist = taught_questions.percentOnBeatTaughtList(lanangPatternsCopy, 'e')
+    >>> percentlist[7]
+    100.0
     
     TODO: Leslie -- how to deal with across a repetition boundary
     '''
