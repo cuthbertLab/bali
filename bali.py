@@ -18,6 +18,7 @@ import os
 import re
 #import weakref
 import unittest
+import copy
 
 import music21 # @UnresolvedImport
 
@@ -461,6 +462,123 @@ class Pattern(object):
         if strokesCounted == 0:
             return 0
         return totalPercent / strokesCounted
+
+def removeSingleStrokes(self, typeOfStroke='e'):
+    '''
+    Returns drum pattern with all single strokes of a given type removed
+    The single strokes are replaced with ','
+
+    >>> import bali, taught_questions
+    >>> fp = bali.FileParser()
+    >>> pattern = fp.taught[4]
+    >>> pattern
+    <bali.Taught Pak Dewa Lanang 10:(_)e e T e _ _ _ _ e e _ e _ e _ _>
+    
+    >>> removed = pattern.removeSingleStrokes('e')
+    >>> removed
+    <bali.Taught Pak Dewa Lanang 10:(_)e e T , _ _ _ _ e e _ , _ , _ _>
+    >>> removed.percentOnBeatTaught('e')
+    50.0
+    '''
+    newDrumPatternList = copy.deepcopy(self.strokes)
+    for i in range(1, len(self.strokes) - 1):
+        if self.strokes[i] != self.strokes[i + 1] and self.strokes[i] == typeOfStroke:
+            if self.strokes[i - 1] != typeOfStroke:
+                newDrumPatternList[i] = ','
+                
+    newDrumPattern = copy.deepcopy(self.drumPattern)
+    newDrumPattern.strokes = newDrumPatternList
+    
+    return newDrumPattern
+    
+def removeConsecutiveStrokes(self, typeOfStroke='e', removeFirst=True, removeSecond=False):
+    '''
+    Returns drum pattern with first stroke of a double stroke of a given type removed.
+    
+    The first stroke of a double stroke is replaced with '.'
+    
+    >>> import bali, taught_questions
+    >>> fp = bali.FileParser()
+    >>> pattern = fp.taught[4]
+    >>> pattern
+    <bali.Taught Pak Dewa Lanang 10:(_)e e T e _ _ _ _ e e _ e _ e _ _>
+    
+    >>> removed = pattern.removeConsecutiveStrokes('e')
+    >>> removed
+    <bali.Taught Pak Dewa Lanang 10:(_). e T e _ _ _ _ . e _ e _ e _ _>
+    >>> removed.percentOnBeatTaught('e')
+    100.0
+
+    >>> removed2 = pattern.removeConsecutiveStrokes('e', removeSecond=True)
+    >>> removed2
+    <bali.Taught Pak Dewa Lanang 10:(_). . T e _ _ _ _ . . _ e _ e _ _>
+
+
+    Not appearing in the repertoire except by mistake, but for completeness sake
+    the name of this method is correct.  It removes all but the last even
+    in cases where there are three or more in a row, unless removeSecond is True
+
+    >>> pattern = fp.taught[4]
+    >>> pattern.drumPattern = '(_)e e T e _ _ _ _ e e e _ _ e _ _'
+    >>> removed = pattern.removeConsecutiveStrokes('e')
+    >>> removed
+    <bali.Taught Pak Dewa Lanang 10:(_). e T e _ _ _ _ . . e _ _ e _ _>
+    
+    
+    Testing removing single strokes first, then removing first double strokes
+    
+    >>> pattern2 = fp.taught[7]
+    >>> pattern2
+    <bali.Taught Pak Tut Lanang Dasar 2:(_)e e _ _ e e _ e _ _ e e T _ T _>
+    
+    >>> removedSingle = pattern2.removeSingleStrokes('e')
+    >>> removedSingle
+    <bali.Taught Pak Tut Lanang Dasar 2:(_)e e _ _ e e _ , _ _ e e T _ T _>
+    
+    >>> removedSingle.percentOnBeatTaught('e')
+    50.0
+    
+    >>> removedFirstDouble = removedSingle.removeConsecutiveStrokes('e')
+    >>> removedFirstDouble
+    <bali.Taught Pak Tut Lanang Dasar 2:(_). e _ _ . e _ , _ _ . e T _ T _>
+    >>> removedFirstDouble.percentOnBeatTaught('e')
+    100.0
+    
+    Testing removing both double strokes 
+    
+    >>> removedBothDoubles = removedSingle.removeConsecutiveStrokes('e', removeSecond=True)
+    >>> removedBothDoubles
+    <bali.Taught Pak Tut Lanang Dasar 2:(_). . _ _ . . _ , _ _ . . T _ T _>
+    
+    Calling percentOnBeatTaughtList on revised lanangPatterns, with eighth pattern
+    having all single and first double strokes removed
+    
+    >>> import copy
+    >>> lanangPatterns = fp.separatePatternsByDrum()[0]
+    >>> lanangPatternsCopy = copy.deepcopy(lanangPatterns)
+    >>> lanangPatternsCopy[7] = removedFirstDouble
+    >>> lanangPatternsCopy[7]
+    <bali.Taught Pak Tut Lanang Dasar 2:(_). e _ _ . e _ , _ _ . e T _ T _>
+    >>> percentlist = taught_questions.percentOnBeatTaughtList(lanangPatternsCopy, 'e')
+    >>> percentlist[7]
+    100.0
+    
+    TODO: Leslie -- how to deal with across a repetition boundary
+    '''
+    newDrumPatternList = copy.deepcopy(self.strokes)
+    for i in range(1, len(self.strokes) - 1):
+        if removeFirst is True:
+            if self.strokes[i] == self.strokes[i + 1] and self.strokes[i] == typeOfStroke:
+                newDrumPatternList[i] = '.'
+        if removeSecond is True:
+            if (self.strokes[i] == self.strokes[i + 1] and self.strokes[i] == typeOfStroke) or self.strokes[i] == '.':
+                newDrumPatternList[i+1] = '.'
+
+    newDrumPattern = copy.deepcopy(self.drumPattern)
+    newDrumPattern.strokes = newDrumPatternList
+    
+    return newDrumPattern
+
 
     def __repr__(self):
         return '<{0}.{1} {2}:{3}>'.format(self.__module__, self.__class__.__name__,
