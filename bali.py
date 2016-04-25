@@ -442,7 +442,7 @@ class Pattern(object):
     def percentOnBeat(self, typeOfStroke='e'):
         '''
         Returns percent of a certain type of stroke that occurs on the beat
-        Helper function for percentOnBeatTaught
+        Helper function for percentOnBeat
         
         >>> import bali, taught_questions
         >>> fp = bali.FileParser()
@@ -470,25 +470,6 @@ class Pattern(object):
             return 0.0
         return (numberOnBeat * 100) / numberOfStroke
 
-    def percentOnBeatTaught(self, typeOfStroke='e'):
-        '''
-        Returns percent of a certain type of stroke that occurs on the beat
-        Double counts end and beginning of each pattern
-        
-        >>> import bali, taught_questions
-        >>> fp = bali.FileParser()
-        >>> pattern = fp.taught[1]
-        >>> pattern.percentOnBeatTaught('e')
-        85.7...
-        '''
-        totalPercent = 0
-        strokesCounted = 0
-        strokesOfType = self.drumPattern.count(typeOfStroke)
-        strokesCounted += strokesOfType
-        totalPercent += self.percentOnBeat(typeOfStroke) * strokesOfType
-        if strokesCounted == 0:
-            return 0.0
-        return totalPercent / strokesCounted
 
     def removeSingleStrokes(self, typeOfStroke='e'):
         '''
@@ -504,7 +485,7 @@ class Pattern(object):
         >>> removed = pattern.removeSingleStrokes('e')
         >>> removed
         <bali.Taught Pak Dewa Lanang 10:(_)e e T , _ _ _ _ e e _ , _ , _ _>
-        >>> removed.percentOnBeatTaught('e')
+        >>> removed.percentOnBeat('e')
         50.0
         
         >>> pattern2 = fp.taught[-1]
@@ -516,7 +497,7 @@ class Pattern(object):
         >>> removed3 = pattern2.removeSingleStrokes('o')
         >>> removed3
         <bali.Taught Pak Tama Wadon Variant 3:(_)o o D _ _ _ o o D _ d D _ _ , _>
-        >>> removed3.percentOnBeatTaught('o')
+        >>> removed3.percentOnBeat('o')
         50.0
         '''
         newDrumPatternList = copy.deepcopy(self.strokes)
@@ -545,7 +526,7 @@ class Pattern(object):
         >>> removed = lanang10.removeConsecutiveStrokes('e')
         >>> removed
         <bali.Taught Pak Dewa Lanang 10:(_). e T e _ _ _ _ . e _ e _ e _ _>
-        >>> removed.percentOnBeatTaught('e')
+        >>> removed.percentOnBeat('e')
         100.0
         >>> lanang10
         <bali.Taught Pak Dewa Lanang 10:(_)e e T e _ _ _ _ e e _ e _ e _ _>
@@ -578,13 +559,13 @@ class Pattern(object):
         >>> removedSingle
         <bali.Taught Pak Tut Lanang Dasar 2:(_)e e _ _ e e _ , _ _ e e T _ T _>
         
-        >>> removedSingle.percentOnBeatTaught('e')
+        >>> removedSingle.percentOnBeat('e')
         50.0
         
         >>> removedFirstDouble = removedSingle.removeConsecutiveStrokes('e')
         >>> removedFirstDouble
         <bali.Taught Pak Tut Lanang Dasar 2:(_). e _ _ . e _ , _ _ . e T _ T _>
-        >>> removedFirstDouble.percentOnBeatTaught('e')
+        >>> removedFirstDouble.percentOnBeat('e')
         100.0
         
         
@@ -596,14 +577,14 @@ class Pattern(object):
         >>> removedBothDoubles
         <bali.Taught Pak Tut Lanang Dasar 2:(_). . _ _ . . _ , _ _ . . T _ T _>
         
-        Calling percentOnBeatTaughtList on revised lanangPatterns, with eighth pattern
+        Calling percentOnBeatList on revised lanangPatterns, with eighth pattern
         having all single and first double strokes removed
         
         >>> import statistics
         >>> lanangPatterns = fp.separatePatternsByDrum()[0]
         >>> numLanang = len(lanangPatterns)
         
-        >>> percentListBefore = taught_questions.percentOnBeatTaughtList(lanangPatterns, 'e')
+        >>> percentListBefore = taught_questions.percentOnBeatLanangE(lanangPatterns, 'e')
         >>> percentListBefore[7]
         57...
         >>> statistics.mean(percentListBefore)
@@ -614,7 +595,7 @@ class Pattern(object):
         >>> lanangPatterns[7]
         <bali.Taught Pak Tut Lanang Dasar 2:(_). e _ _ . e _ e _ _ . e T _ T _>
         
-        >>> percentListAfter = taught_questions.percentOnBeatTaughtList(lanangPatterns, 'e')
+        >>> percentListAfter = taught_questions.percentOnBeatList(lanangPatterns, 'e')
         >>> percentListAfter[7]
         100.0
         >>> statistics.mean(percentListAfter)
