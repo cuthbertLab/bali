@@ -118,7 +118,7 @@ def percentOnBeatConsecutivesRemoved(pattern, typeOfStroke='e'):
     80.0
     '''
     
-    patternConsecutivesRemoved = removeConsecutiveStrokes(pattern, typeOfStroke='e')
+    patternConsecutivesRemoved = pattern.removeConsecutiveStrokes(typeOfStroke='e')
     patternStrokes = patternConsecutivesRemoved.strokes
     totalPercent = 0
     strokesCounted = 0
