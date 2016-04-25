@@ -58,7 +58,27 @@ class Pattern(object):
         self.comments = ""
         self.indexInFile = -1 # -1 means undefined. otherwise 0 to ...
         self.fileParser = None # the FileParser object.
+      
+    def copy(self):
+        '''
+        Returns a copy of the Pattern
         
+        >>> import bali
+        >>> fp = bali.FileParser()
+        >>> pattern = fp.taught[1]
+        >>> pattern
+        <bali.Taught Pak Tama Lanang 0 (intro):(_)_ _ e e _ e _ e _ e _ e _ e T _>
+        
+        >>> pCopy = pattern.copy()
+        >>> pCopy.title = 'wild lanang'
+        >>> pCopy
+        <bali.Taught wild lanang:(_)_ _ e e _ e _ e _ e _ e _ e T _>
+        >>> pattern
+        <bali.Taught Pak Tama Lanang 0 (intro):(_)_ _ e e _ e _ e _ e _ e _ e T _>
+        
+        '''  
+        return copy.deepcopy(self)
+      
     def _getStrokes(self):
         '''
         >>> import bali
@@ -518,28 +538,32 @@ class Pattern(object):
         
         >>> import bali, taught_questions
         >>> fp = bali.FileParser()
-        >>> pattern = fp.taught[4]
-        >>> pattern
+        >>> lanang10 = fp.taught[4]
+        >>> lanang10
         <bali.Taught Pak Dewa Lanang 10:(_)e e T e _ _ _ _ e e _ e _ e _ _>
         
-        >>> removed = pattern.removeConsecutiveStrokes('e')
+        >>> removed = lanang10.removeConsecutiveStrokes('e')
         >>> removed
         <bali.Taught Pak Dewa Lanang 10:(_). e T e _ _ _ _ . e _ e _ e _ _>
         >>> removed.percentOnBeatTaught('e')
         100.0
+        >>> lanang10
+        <bali.Taught Pak Dewa Lanang 10:(_)e e T e _ _ _ _ e e _ e _ e _ _>
     
-        >>> removed2 = pattern.removeConsecutiveStrokes('e', removeSecond=True)
+        >>> removed2 = lanang10.removeConsecutiveStrokes('e', removeSecond=True)
         >>> removed2
         <bali.Taught Pak Dewa Lanang 10:(_). . T e _ _ _ _ . . _ e _ e _ _>
+        >>> lanang10
+        <bali.Taught Pak Dewa Lanang 10:(_)e e T e _ _ _ _ e e _ e _ e _ _>
     
     
         Not appearing in the repertoire except by mistake, but for completeness sake
         the name of this method is correct.  It removes all but the last even
         in cases where there are three or more in a row, unless removeSecond is True
     
-        >>> pattern = fp.taught[4]
-        >>> pattern.drumPattern = '(_)e e T e _ _ _ _ e e e _ _ e _ _'
-        >>> removed = pattern.removeConsecutiveStrokes('e')
+        >>> screwedUpLanang = fp.taught[4].copy()
+        >>> screwedUpLanang.drumPattern = '(_)e e T e _ _ _ _ e e e _ _ e _ _'
+        >>> removed = screwedUpLanang.removeConsecutiveStrokes('e')
         >>> removed
         <bali.Taught Pak Dewa Lanang 10:(_). e T e _ _ _ _ . . e _ _ e _ _>
         
@@ -564,8 +588,10 @@ class Pattern(object):
         100.0
         
         
-        Testing removing both double strokes 
+        Testing removing both double strokes (removeFirst is True by default)
         
+        >>> removedSingle
+         <bali.Taught Pak Tut Lanang Dasar 2:(_)e e _ _ e e _ , _ _ e e T _ T _>
         >>> removedBothDoubles = removedSingle.removeConsecutiveStrokes('e', removeSecond=True)
         >>> removedBothDoubles
         <bali.Taught Pak Tut Lanang Dasar 2:(_). . _ _ . . _ , _ _ . . T _ T _>
@@ -573,16 +599,28 @@ class Pattern(object):
         Calling percentOnBeatTaughtList on revised lanangPatterns, with eighth pattern
         having all single and first double strokes removed
         
-        >>> import copy
+        >>> import statistics
         >>> lanangPatterns = fp.separatePatternsByDrum()[0]
-        >>> lanangPatternsCopy = copy.deepcopy(lanangPatterns)
-        >>> lanangPatternsCopy[7] = removedFirstDouble
-        >>> lanangPatternsCopy[7]
-        <bali.Taught Pak Tut Lanang Dasar 2:(_). e _ _ . e _ , _ _ . e T _ T _>
+        >>> numLanang = len(lanangPatterns)
         
-        >>> percentlist = taught_questions.percentOnBeatTaughtList(lanangPatternsCopy, 'e')
-        >>> percentlist[7]
+        >>> percentListBefore = taught_questions.percentOnBeatTaughtList(lanangPatterns, 'e')
+        >>> percentListBefore[7]
+        57...
+        >>> statistics.mean(percentListBefore)
+        54...
+
+        >>> for i in range(numLanang):
+        ...     lanangPatterns[i] = lanangPatterns[i].removeConsecutiveStrokes('e')
+        >>> lanangPatterns[7]
+        <bali.Taught Pak Tut Lanang Dasar 2:(_). e _ _ . e _ e _ _ . e T _ T _>
+        
+        >>> percentListAfter = taught_questions.percentOnBeatTaughtList(lanangPatterns, 'e')
+        >>> percentListAfter[7]
         100.0
+        >>> statistics.mean(percentListAfter)
+        80.0
+        
+        
         
         TODO: Leslie -- how to deal with across a repetition boundary
         '''
@@ -646,6 +684,12 @@ class FileParser(object):
         '''
         Takes a list of lines from a file and an empty list [] and fills that
         list with Taught objects.
+        
+        >>> import bali
+        >>> fp = bali.FileParser()
+        >>> lineList = fp.taught
+        >>> lineList[4]
+        <bali.Taught Pak Dewa Lanang 10:(_)e e T e _ _ _ _ e e _ e _ e _ _>
         '''
         currentTitle = None
         currentGongPattern = None
