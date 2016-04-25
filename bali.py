@@ -418,6 +418,50 @@ class Pattern(object):
         else:
             raise IncorrectBeatNumberException("Wrong beat")
         
+    def percentOnBeat(self, typeOfStroke='e'):
+        '''
+        Returns percent of a certain type of stroke that occurs on the beat
+        Helper function for percentOnBeatTaught
+        
+        >>> import bali, taught_questions
+        >>> fp = bali.FileParser()
+        >>> pattern = fp.taught[1]
+        >>> pattern.percentOnBeat('e')
+        85.7...
+        '''
+        numberOnBeat = 0
+        numberOfStroke = 0
+        for beat, stroke in self.iterateStrokes():
+            if stroke != typeOfStroke:
+                continue
+            numberOfStroke += 1
+            if (beat * 2) % 1 == 0:
+                numberOnBeat += 1
+    
+        if numberOfStroke == 0:
+            return 0
+        return (numberOnBeat * 100) / numberOfStroke
+
+    def percentOnBeatTaught(self, typeOfStroke='e'):
+        '''
+        Returns percent of a certain type of stroke that occurs on the beat
+        Double counts end and beginning of each pattern
+        
+        >>> import bali, taught_questions
+        >>> fp = bali.FileParser()
+        >>> pattern = fp.taught[1]
+        >>> pattern.percentOnBeatTaught('e')
+        85.7...
+        '''
+        totalPercent = 0
+        strokesCounted = 0
+        strokesOfType = self.drumPattern.count(typeOfStroke)
+        strokesCounted += strokesOfType
+        totalPercent += self.percentOnBeat(typeOfStroke) * strokesOfType
+        if strokesCounted == 0:
+            return 0
+        return totalPercent / strokesCounted
+
     def __repr__(self):
         return '<{0}.{1} {2}:{3}>'.format(self.__module__, self.__class__.__name__,
                                           self.title, self.drumPattern)

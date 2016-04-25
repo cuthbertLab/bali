@@ -18,51 +18,7 @@ Starting with hypothesis that only high strokes (e and o) are being analyzed
 What percentage of Lanang and Wadon is on and off the beat? 
 '''
 
-def percentOnBeat(pattern, typeOfStroke='e'):
-    '''
-    Returns percent of a certain type of stroke that occurs on the beat
-    Helper function for percentOnBeatTaught
-    
-    >>> import bali, taught_questions
-    >>> fp = bali.FileParser()
-    >>> pattern = fp.taught[1]
-    >>> taught_questions.percentOnBeat(pattern, 'e')
-    85.7...
-    '''
-    numberOnBeat = 0
-    numberOfStroke = 0
-    for beat, stroke in pattern.iterateStrokes():
-        if stroke != typeOfStroke:
-            continue
-        numberOfStroke += 1
-        if (beat * 2) % 1 == 0:
-            numberOnBeat += 1
 
-    if numberOfStroke == 0:
-        return 0
-    return (numberOnBeat * 100) / numberOfStroke
-#print(percentOnBeat(fp.taught[1], 'e'))
-
-def percentOnBeatTaught(pattern, typeOfStroke='e'):
-    '''
-    Returns percent of a certain type of stroke that occurs on the beat
-    Double counts end and beginning of each pattern
-    
-    >>> import bali, taught_questions
-    >>> fp = bali.FileParser()
-    >>> pattern = fp.taught[1]
-    >>> taught_questions.percentOnBeatTaught(pattern, 'e')
-    85.7...
-    '''
-    totalPercent = 0
-    strokesCounted = 0
-    strokesOfType = pattern.drumPattern.count(typeOfStroke)
-    strokesCounted += strokesOfType
-    totalPercent += percentOnBeat(pattern, typeOfStroke) * strokesOfType
-    if strokesCounted == 0:
-        return 0
-    return totalPercent / strokesCounted
-#print(percentOnBeatTaught(fp.taught[1], 'e'))
 
 def percentOnBeatTaughtList(listOfPatterns, typeOfStroke='e'):
     '''
@@ -79,21 +35,12 @@ def percentOnBeatTaughtList(listOfPatterns, typeOfStroke='e'):
     >>> len(percentlist)
     41
     >>> percentlist[1]
-    85.71...
+    85.7...
     '''
     percents = []
     for i in range(len(listOfPatterns)):
-        percents.append(percentOnBeatTaught(listOfPatterns[i], typeOfStroke))
+        percents.append(listOfPatterns[i].percentOnBeatTaught(typeOfStroke))
     return percents
-
-# lanangPatterns = []
-# wadonPatterns = []
-# for p in fp.taught:
-#     if p.drumType == 'Lanang':
-#         lanangPatterns.append(p)
-#     elif p.drumType == 'Wadon':
-#         wadonPatterns.append(p)
-# print(percentOnBeatTaughtList(lanangPatterns, 'e'))
 
 '''
 Figure out if this "Lanang on beat, Wadon off beat" hypothesis doesn't hold with double strokes
@@ -170,7 +117,7 @@ def removeSingleStrokes(pattern, typeOfStroke='e'):
     >>> removed = taught_questions.removeSingleStrokes(pattern, 'e')
     >>> removed
     <bali.Taught Pak Dewa Lanang 10:(_)e e T , _ _ _ _ e e _ , _ , _ _>
-    >>> taught_questions.percentOnBeatTaught(removed, 'e')
+    >>> removed.percentOnBeatTaught('e')
     50.0
     '''
     newDrumPatternList = copy.deepcopy(pattern.strokes)
@@ -199,7 +146,7 @@ def removeConsecutiveStrokes(pattern, typeOfStroke='e', removeFirst=True, remove
     >>> removed = taught_questions.removeConsecutiveStrokes(pattern, 'e')
     >>> removed
     <bali.Taught Pak Dewa Lanang 10:(_). e T e _ _ _ _ . e _ e _ e _ _>
-    >>> taught_questions.percentOnBeatTaught(removed, 'e')
+    >>> removed.percentOnBeatTaught('e')
     100.0
 
     >>> removed2 = taught_questions.removeConsecutiveStrokes(pattern, 'e', removeSecond=True)
@@ -228,13 +175,13 @@ def removeConsecutiveStrokes(pattern, typeOfStroke='e', removeFirst=True, remove
     >>> removedSingle
     <bali.Taught Pak Tut Lanang Dasar 2:(_)e e _ _ e e _ , _ _ e e T _ T _>
     
-    >>> taught_questions.percentOnBeatTaught(removedSingle, 'e')
+    >>> removedSingle.percentOnBeatTaught('e')
     50.0
     
     >>> removedFirstDouble = taught_questions.removeConsecutiveStrokes(removedSingle, 'e')
     >>> removedFirstDouble
     <bali.Taught Pak Tut Lanang Dasar 2:(_). e _ _ . e _ , _ _ . e T _ T _>
-    >>> taught_questions.percentOnBeatTaught(removedFirstDouble, 'e')
+    >>> removedFirstDouble.percentOnBeatTaught('e')
     100.0
     
     Testing removing both double strokes 
