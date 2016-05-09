@@ -583,7 +583,7 @@ class Pattern(object):
 
     def whenLanangOffT(self):
         '''
-        Returns in which half of the gong lanang T's land off the beat
+        Returns in which half of the gong lanang T strokes land off the beat
         when they're on the first subdivision of beat
         
         >>> import bali
@@ -601,6 +601,7 @@ class Pattern(object):
         >>> pattern2.whenLanangOffT()['second half']
         1
         '''
+ 
         firstHalf = 0
         secondHalf = 0
         for beat, stroke in self.iterateStrokes():

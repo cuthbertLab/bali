@@ -134,7 +134,27 @@ def percentOffBeatLanangTDouble():
         percents.append((100 - percent, weight))
     return percents
 
-#test Leslie's theory, make new tests for wadon, sparser beat levels, split and join patterns
+
+def whenLanangOffTList():
+    '''
+    Returns distribution of which half of the gong lanang T's land in
+    when they're on the 1st or 3rd division of the beat. In dictionary form.
+    
+    >>> import bali, taught_questions
+    >>> taught_questions.whenLanangOffTList()['first half']
+    5
+    >>> taught_questions.whenLanangOffTList()['second half']
+    20
+    '''
+    
+    lanangPatterns = fp.separatePatternsByDrum()[0]
+    dist = {'first half': 0, 'second half': 0}
+    for i in range(len(lanangPatterns)):
+        dist['first half'] += lanangPatterns[i].whenLanangOffT()['first half']
+        dist['second half'] += lanangPatterns[i].whenLanangOffT()['second half']
+        print(dist)
+    return dist 
+
 
 def percentOffBeatWadonO():
     '''
@@ -271,6 +291,25 @@ def percentOnBeatWadonOGuntang():
         percents.append((percent, weight))
     return percents
     
+     
+def whenWadonOffDList():
+    '''
+    Returns distribution of which half of the gong wadon D's land in
+    when they're on the 1st or 3rd division of the beat. In dictionary form.
+    
+    >>> import bali, taught_questions
+    >>> taught_questions.whenWadonOffDList()['first half']
+    24
+    >>> taught_questions.whenWadonOffDList()['second half']
+    22
+    '''
+    
+    wadonPatterns = fp.separatePatternsByDrum()[1]
+    dist = {'first half': 0, 'second half': 0}
+    for i in range(len(wadonPatterns)):
+        dist['first half'] += wadonPatterns[i].whenWadonOffD()['first half']
+        dist['second half'] += wadonPatterns[i].whenWadonOffD()['second half']
+    return dist 
         
         
 if __name__ == '__main__':
