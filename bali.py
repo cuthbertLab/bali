@@ -534,7 +534,7 @@ class Pattern(object):
             return 0.0
         return numberOfStroke
     
-    def firstOrThirdBeat(self, typeOfStroke=['e']):
+    def firstOrThirdBeat(self, typeOfStroke='e'):
         '''
         Returns how many strokes of a certain type land on first or third beat
         in a guntang
@@ -544,21 +544,21 @@ class Pattern(object):
         >>> lanangPatterns = fp.separatePatternsByDrum()[0]
         >>> wadonPatterns = fp.separatePatternsByDrum()[1]
         >>> pattern = lanangPatterns[1]
-        >>> pattern.firstOrThirdBeat(['e'])['first']
+        >>> pattern.firstOrThirdBeat()['first']
         0
-        >>> pattern.firstOrThirdBeat(['e'])['third']
+        >>> pattern.firstOrThirdBeat()['third']
         1
 
         >>> pattern2 = lanangPatterns[2]
-        >>> pattern2.firstOrThirdBeat(['e'])['first']
+        >>> pattern2.firstOrThirdBeat()['first']
         0
-        >>> pattern2.firstOrThirdBeat(['e'])['third']
+        >>> pattern2.firstOrThirdBeat()['third']
         1
         
         >>> pattern3 = wadonPatterns[-1]
-        >>> pattern3.firstOrThirdBeat(['d', 'D'])['first']
+        >>> pattern3.firstOrThirdBeat('Dd')['first']
         1
-        >>> pattern3.firstOrThirdBeat(['d', 'D'])['first']
+        >>> pattern3.firstOrThirdBeat('Dd')['first']
         1
         '''
         firstBeat = 0
@@ -572,13 +572,10 @@ class Pattern(object):
                 thirdBeat += 1
         return {'first': firstBeat, 'third': thirdBeat}
 
-    def secondOrFourthBeat(self, typeOfStroke=['D', 'd']):
+    def secondOrFourthBeat(self, typeOfStroke='Dd'):
         '''
         Returns how many strokes of a certain type land on second or fourth beat
         in a guntang
-        
-        NOTE: d and D both need to be counted, so typeOfStroke in this case
-        is a list
         
         >>> import bali
         >>> fp = bali.FileParser()
@@ -631,55 +628,61 @@ class Pattern(object):
  
         firstHalf = 0
         secondHalf = 0
-        for beat, stroke in self.iterateStrokes():
+        pattern = self.removeConsecutiveStrokes('T')
+        for beat, stroke in zip(self.iterateStrokes(), pattern.strokes[1:]):
             if stroke != 'T':
                 continue
-            if (beat - .25) % 1 == 0:
-                if (beat / 4) < 0.5:
+            if (beat[0] - .25) % 1 == 0:
+                if (beat[0] / 4) < 0.5:
                     firstHalf += 1
-                if (beat / 4) >= 0.5:
+                if (beat[0] / 4) >= 0.5:
                     secondHalf += 1
         return {'first half': firstHalf, 'second half': secondHalf}       
                 
     def whenWadonOffD(self):
         '''
         Returns in which half of the gong wadon D's land off the beat
-        when they're on the 1st or 3rd division of the beat
+        when they're on the 1st or 3rd division of the beat, considering 
+        only single strokes
         
         >>> import bali
         >>> fp = bali.FileParser()
         >>> wadonPatterns = fp.separatePatternsByDrum()[1]
         
         >>> pattern = wadonPatterns[-6]
+        >>> pattern = pattern.removeConsecutiveStrokes('Dd')
         >>> pattern.whenWadonOffD()['first half']
-        2
+        1
         >>> pattern.whenWadonOffD()['second half']
-        2
+        1
         
         >>> pattern2 = wadonPatterns[-7]
         >>> pattern2.whenWadonOffD()['first half']
         2
         >>> pattern2.whenWadonOffD()['second half']
-        1
+        0
         '''
         
         firstHalf = 0
         secondHalf = 0
-        for beat, stroke in self.iterateStrokes():
+        pattern = self.removeConsecutiveStrokes('Dd')
+        for beat, stroke in zip(self.iterateStrokes(), pattern.strokes[1:]):
             if stroke != 'D' and stroke != 'd':
                 continue
-            if (beat - .25) % 1 == 0 or (beat - .75) % 1 == 0:
-                if (beat / 4) < 0.5:
+            if (beat[0] - .25) % 1 == 0 or (beat[0] - .75) % 1 == 0:
+                if (beat[0] / 4) < 0.5:
                     firstHalf += 1
-                if (beat / 4) >= 0.5:
+                if (beat[0] / 4) >= 0.5:
                     secondHalf += 1
         return {'first half': firstHalf, 'second half': secondHalf}  
     
 
     def removeSingleStrokes(self, typeOfStroke='e'):
         '''
-        Returns drum pattern with all single strokes of a given type removed
+        Returns drum pattern with all single strokes of a given type removed.
+        Type of stroke is a string with all strokes to be removed.
         The single strokes are replaced with ','
+        
     
         >>> import bali, taught_questions
         >>> fp = bali.FileParser()
@@ -717,14 +720,14 @@ class Pattern(object):
         newDrumPatternList = copy.deepcopy(self.strokes)
         for i in range(len(self.strokes)):
             if i == 0:
-                if self.strokes[i + 1] != typeOfStroke and self.strokes[i] == typeOfStroke:
+                if self.strokes[i + 1] not in typeOfStroke and self.strokes[i] in typeOfStroke:
                     newDrumPatternList[i] = ','
             if 0 < i < len(self.strokes) - 1:
-                if self.strokes[i] != self.strokes[i + 1] and self.strokes[i] == typeOfStroke:
+                if self.strokes[i] != self.strokes[i + 1] and self.strokes[i] in typeOfStroke:
                     if self.strokes[i - 1] != typeOfStroke:
                         newDrumPatternList[i] = ','
             else:
-                if self.strokes[i - 1] != typeOfStroke and self.strokes[i] == typeOfStroke:
+                if self.strokes[i - 1] not in typeOfStroke and self.strokes[i] in typeOfStroke:
                     newDrumPatternList[i] = ','
         newDrumPattern = copy.deepcopy(self)
         newDrumPattern.strokes = newDrumPatternList
@@ -734,6 +737,7 @@ class Pattern(object):
     def removeConsecutiveStrokes(self, typeOfStroke='e', removeFirst=True, removeSecond=False):
         '''
         Returns drum pattern with first stroke of a double stroke of a given type removed.
+        Type of stroke is a string with all strokes to be removed.
         
         The first stroke of a double stroke is replaced with '.'
         
@@ -757,7 +761,13 @@ class Pattern(object):
         >>> lanang10
         <bali.Taught Pak Dewa Lanang 10:(_)e e T e _ _ _ _ e e _ e _ e _ _>
     
-    
+        >>> removedDiffStrokes = fp.taught[-6]
+        >>> removedDiffStrokes
+        <bali.Taught Pak Dewa Wadon 5:(o)D o d D o D o o D o d D o D o o>
+        >>> removedDiffStrokes.removeConsecutiveStrokes('Dd')
+        <bali.Taught Pak Dewa Wadon 5:(o)D o . D o D o o D o . D o D o o>
+        
+        
         Not appearing in the repertoire except by mistake, but for completeness sake
         the name of this method is correct.  It removes all but the last even
         in cases where there are three or more in a row, unless removeSecond is True
@@ -803,10 +813,10 @@ class Pattern(object):
         newDrumPatternList = copy.deepcopy(self.strokes)
         for i in range(1, len(self.strokes) - 1):
             if removeFirst is True:
-                if self.strokes[i] == self.strokes[i + 1] and self.strokes[i] == typeOfStroke:
+                if self.strokes[i] in typeOfStroke and self.strokes[i + 1] in typeOfStroke:
                     newDrumPatternList[i] = '.'
             if removeSecond is True:
-                if (self.strokes[i] == self.strokes[i + 1] and self.strokes[i] == typeOfStroke) or self.strokes[i] == '.':
+                if (self.strokes[i] in typeOfStroke and self.strokes[i + 1] in typeOfStroke) or self.strokes[i] == '.':
                     newDrumPatternList[i+1] = '.'
     
         newDrumPattern = copy.deepcopy(self)
@@ -1174,15 +1184,15 @@ class ImprovInGong(PatternHolder):
             return None
 
     def previousImprovInGong(self):
-        '''
-        Gets previous pattern.
-        
-        >>> import bali
-        >>> fp = bali.FileParser()
-        >>> pattern = fp.transcribed[5]
-        >>> pattern.previousImprovInGong()
-        <bali.Pattern 00:00:08:(r)l r e e T e T e T e T e T e T e T e T e T e T r e e T e T e T r>
-        '''
+#         '''
+#         Gets previous pattern.
+#         
+#         >>> import bali
+#         >>> fp = bali.FileParser()
+#         >>> pattern = fp.transcribed[5]
+#         >>> pattern.previousImprovInGong()
+#         <bali.Pattern 00:00:08:(r)l r e e T e T e T e T e T e T e T e T e T e T r e e T e T e T r>
+#         '''
         fp = self.fileParser
         currentIndex = self.indexInFile
         if currentIndex != 0:

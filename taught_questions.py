@@ -332,9 +332,9 @@ def whenWadonOffDList():
     
     >>> import bali, taught_questions
     >>> taught_questions.whenWadonOffDList()['first half']
-    24
+    17
     >>> taught_questions.whenWadonOffDList()['second half']
-    22
+    11
     '''
     
     wadonPatterns = fp.separatePatternsByDrum()[1]
