@@ -130,6 +130,27 @@ def percentOffBeatWadonO():
     return percents
 
 
+def offBeatWadonDBeat():
+    '''
+    Returns how many times a wadon 'D' lands on the 1st or 3rd beat of a 
+    guntang when it's off beat
+    
+    >>> import bali, taught_questions
+    >>> firstorthird = taught_questions.offBeatWadonDBeat()
+    
+    '''
+    wadonPatterns = fp.separatePatternsByDrum()[1]
+    percents = []
+    for i in range(len(wadonPatterns)):
+        pattern = wadonPatterns[i]
+        percent = pattern.percentOnBeat('D', bali.BeatLevel.guntang)
+        firstBeat = 0
+        thirdBeat = 0
+        
+        
+        percents.append((percent, firstBeat, thirdBeat))
+    return percents
+    
 def percentOnBeatWadonDGuntang():
     '''
     Returns percent on beat for a wadon 'D' for every pattern, at beat level guntang

@@ -507,7 +507,73 @@ class Pattern(object):
             return 0.0
         return numberOfStroke
     
-    
+    def firstOrThirdBeat(self, typeOfStroke='e'):
+        '''
+        Returns how many strokes of a certain type land on first or third beat
+        in a guntang
+        
+        >>> import bali
+        >>> fp = bali.FileParser()
+        >>> lanangPatterns = fp.separatePatternsByDrum()[0]
+        >>> pattern = lanangPatterns[1]
+        >>> pattern.firstOrThirdBeat('e')['first']
+        0
+        >>> pattern.firstOrThirdBeat('e')['third']
+        1
+
+        >>> pattern2 = lanangPatterns[2]
+        >>> pattern2.firstOrThirdBeat('e')['first']
+        0
+        >>> pattern2.firstOrThirdBeat('e')['third']
+        1
+        '''
+        firstBeat = 0
+        thirdBeat = 0
+        for beat, stroke in self.iterateStrokes():
+            if stroke != typeOfStroke:
+                continue
+            if (beat - .25) % 1 == 0:
+                firstBeat += 1
+            elif (beat - .75) % 1 == 0:
+                thirdBeat += 1
+        return {'first': firstBeat, 'third': thirdBeat}
+
+    def secondOrFourthBeat(self, typeOfStroke=['D', 'd']):
+        '''
+        Returns how many strokes of a certain type land on second or fourth beat
+        in a guntang
+        
+        NOTE: d and D both need to be counted, so typeOfStroke in this case
+        is a list
+        
+        >>> import bali
+        >>> fp = bali.FileParser()
+        >>> wadonPatterns = fp.separatePatternsByDrum()[1]
+        >>> pattern = wadonPatterns[4]
+        >>> pattern.secondOrFourthBeat()['second']
+        2
+        >>> pattern.secondOrFourthBeat()['fourth']
+        1
+
+        >>> pattern2 = wadonPatterns[5]
+        >>> pattern2.secondOrFourthBeat()['second']
+        0
+        >>> pattern2.secondOrFourthBeat()['fourth']
+        1
+        '''
+        
+        secondBeat = 0
+        fourthBeat = 0
+        for beat, stroke in self.iterateStrokes():
+            if stroke not in typeOfStroke:
+                continue
+            if (beat - .5) % 1 == 0:
+                secondBeat += 1
+            elif beat % 1 == 0:
+                fourthBeat += 1
+        return {'second': secondBeat, 'fourth': fourthBeat}   
+
+
     def removeSingleStrokes(self, typeOfStroke='e'):
         '''
         Returns drum pattern with all single strokes of a given type removed
