@@ -449,9 +449,6 @@ class Pattern(object):
     def percentOnBeat(self, typeOfStroke='e', beatLevel=BeatLevel.double):
         '''
         Returns percent of a certain type of stroke that occurs on the beat
-        Helper function for percentOnBeat
-        
-        Guntang is every other beat
         
         >>> import bali
         >>> fp = bali.FileParser()
@@ -484,7 +481,33 @@ class Pattern(object):
             return 0.0
         return (numberOnBeat * 100) / numberOfStroke
 
+    def beatsInPattern(self, typeOfStroke='e'):
+        '''
+        Returns number of a certain type of stroke in a single pattern
+        
+        >>> import bali
+        >>> fp = bali.FileParser()
+        >>> pattern = fp.taught[1]
+        >>> pattern.beatsInPattern('e')
+        7
+        >>> pattern.beatsInPattern('T')
+        1
 
+        >>> pattern2 = fp.taught[-1]
+        >>> pattern2.beatsInPattern('o')
+        5
+        '''
+        numberOfStroke = 0
+        for stroke in self.iterateStrokes():
+            if stroke[1] != typeOfStroke:
+                continue
+            numberOfStroke += 1
+            
+        if numberOfStroke == 0:
+            return 0.0
+        return numberOfStroke
+    
+    
     def removeSingleStrokes(self, typeOfStroke='e'):
         '''
         Returns drum pattern with all single strokes of a given type removed
@@ -492,6 +515,15 @@ class Pattern(object):
     
         >>> import bali, taught_questions
         >>> fp = bali.FileParser()
+        
+        >>> pattern = fp.taught[0]
+        >>> pattern
+        <bali.Taught Lanang Dasar:(e)_ e _ e _ e _ e _ e _ e _ e _ e>
+        >>> removed = pattern.removeSingleStrokes('e')
+        >>> removed
+        <bali.Taught Lanang Dasar:(,)_ , _ , _ , _ , _ , _ , _ , _ ,>
+        >>> removed.percentOnBeat('e')
+        0.0
         
         >>> pattern = fp.taught[4]
         >>> pattern
@@ -515,11 +547,17 @@ class Pattern(object):
         50.0
         '''
         newDrumPatternList = copy.deepcopy(self.strokes)
-        for i in range(1, len(self.strokes) - 1):
-            if self.strokes[i] != self.strokes[i + 1] and self.strokes[i] == typeOfStroke:
-                if self.strokes[i - 1] != typeOfStroke:
+        for i in range(len(self.strokes)):
+            if i == 0:
+                if self.strokes[i + 1] != typeOfStroke and self.strokes[i] == typeOfStroke:
                     newDrumPatternList[i] = ','
-                    
+            if 0 < i < len(self.strokes) - 1:
+                if self.strokes[i] != self.strokes[i + 1] and self.strokes[i] == typeOfStroke:
+                    if self.strokes[i - 1] != typeOfStroke:
+                        newDrumPatternList[i] = ','
+            else:
+                if self.strokes[i - 1] != typeOfStroke and self.strokes[i] == typeOfStroke:
+                    newDrumPatternList[i] = ','
         newDrumPattern = copy.deepcopy(self)
         newDrumPattern.strokes = newDrumPatternList
         
