@@ -14,7 +14,7 @@ class PercentList(list):
 
     def num(self):
         '''
-        return the ... KY EXPLAIN... 
+        return the numerator of the weighted mean
         '''
         tot = 0
         for percent, weight in self:
@@ -63,7 +63,7 @@ def percentOnBeatLanangE():
     >>> percentList[-1][0]
     66.6...
     >>> percentList.weighedTotalPercentage()
-    56...
+    56.8...
     '''
     lanangPatterns = fp.separatePatternsByDrum()[0]
     percents = PercentList()
@@ -119,7 +119,7 @@ def percentOffBeatLanangTGuntang():
     ...     num += percent * weight
     ...     denom += weight
     >>> num/denom
-    97...
+    97.2...
     >>> denom
     111.0
     '''
@@ -150,7 +150,7 @@ def percentOffBeatLanangTDouble():
     ...     num += percent * weight
     ...     denom += weight
     >>> num/denom
-    92...
+    92.7...
     '''
     lanangPatterns = fp.separatePatternsByDrum()[0]
     percents = []
@@ -196,7 +196,7 @@ def percentOffBeatWadonO():
     ...     num += percent * weight
     ...     denom += weight
     >>> num/denom
-    90...
+    90.7...
     
     '''
     wadonPatterns = fp.separatePatternsByDrum()[1]
@@ -237,9 +237,9 @@ def percentOnBeatWadonDGuntang():
     >>> import bali, taught_questions
     >>> percentList = taught_questions.percentOnBeatWadonDGuntang()
     >>> percentList[4][0]
-    33...
+    33.3...
     >>> percentList[-1][0]
-    33...
+    33.3...
     
     >>> num = 0
     >>> denom = 0
@@ -250,7 +250,7 @@ def percentOnBeatWadonDGuntang():
     Great confirmation of a null hypothesis: 25%
     
     >>> num/denom
-    26...
+    26.0
     '''
     wadonPatterns = fp.separatePatternsByDrum()[1]
     percents = []
@@ -270,7 +270,7 @@ def percentOnBeatWadonDDouble():
     >>> percentList[4][0]
     100.0
     >>> percentList[-1][0]
-    33...
+    33.3...
     
     >>> num = 0
     >>> denom = 0
@@ -311,7 +311,7 @@ def percentOnBeatWadonOGuntang():
     ...     num += percent * weight
     ...     denom += weight
     >>> num/denom
-    62...
+    62.0...
     '''
     wadonPatterns = fp.separatePatternsByDrum()[1]
     percents = []
