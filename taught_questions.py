@@ -46,6 +46,37 @@ def percentOnBeatLanangE():
     return percents
 
 
+def percentOffBeatLanangEGuntang():
+    '''
+    Returns percent off beat for a lanang 'e' stroke for every pattern, at beat level guntang,
+    after removing single strokes and then first of consecutive strokes
+    
+    >>> import bali, taught_questions
+    >>> percentList = taught_questions.percentOffBeatLanangEGuntang()
+    >>> percentList[1][0]
+    0.0
+    >>> percentList[4][0]
+    100.0
+    
+    >>> num = 0
+    >>> denom = 0
+    >>> for (percent, weight) in percentList:
+    ...     num += percent * weight
+    ...     denom += weight
+    >>> num/denom
+    75.9...
+    '''
+    lanangPatterns = fp.separatePatternsByDrum()[0]
+    percents = []
+    for i in range(len(lanangPatterns)):
+        pattern = lanangPatterns[i].removeSingleStrokes('e')
+        pattern = pattern.removeConsecutiveStrokes('e')
+        percent = pattern.percentOnBeat('e', bali.BeatLevel.guntang)
+        weight = pattern.beatsInPattern('e')
+        percents.append((100 - percent, weight))
+    return percents
+
+
 def percentOffBeatLanangTGuntang():
     '''
     Returns percent off beat for a lanang 'T' stroke for every pattern, at beat level guntang
@@ -210,7 +241,35 @@ def percentOnBeatWadonDDouble():
     return percents
 
 
-
+def percentOnBeatWadonOGuntang():
+    '''
+    Returns percent on beat for a wadon 'o' for every pattern, at beat level double,
+    after removing all single strokes and the first of all double strokes
+    
+    >>> import bali, taught_questions
+    >>> percentList = taught_questions.percentOnBeatWadonOGuntang()
+    >>> percentList[8][0]
+    100.0
+    >>> percentList[-1][0]
+    50.0
+    
+    >>> num = 0
+    >>> denom = 0
+    >>> for (percent, weight) in percentList:
+    ...     num += percent * weight
+    ...     denom += weight
+    >>> num/denom
+    62...
+    '''
+    wadonPatterns = fp.separatePatternsByDrum()[1]
+    percents = []
+    for i in range(len(wadonPatterns)):
+        pattern = wadonPatterns[i].removeSingleStrokes('o')
+        pattern = pattern.removeConsecutiveStrokes('o')
+        percent = pattern.percentOnBeat('o', bali.BeatLevel.guntang)
+        weight = pattern.beatsInPattern('o')
+        percents.append((percent, weight))
+    return percents
     
         
         
