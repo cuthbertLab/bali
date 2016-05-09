@@ -36,8 +36,6 @@ class BeatLevel(enum.IntEnum):
     twoBeat = 8
     fourBeat = 16
     
-
-
 class Pattern(object):
     '''
     Represents one drum pattern.
@@ -250,7 +248,6 @@ class Pattern(object):
             return strokeDict[stroke]
         else:
             raise BaliException('I do not know how to deal with this stroke')
-
 
         unused_strokeNames = {'e': 'peng',
                       'T': 'tut', # doot

@@ -34,7 +34,7 @@ def percentOnBeatLanangE():
     for i in range(len(lanangPatterns)):
         percents.append(lanangPatterns[i].percentOnBeat('e'))
     return percents
-
+#add percents for each beats, test Leslie's theory, make new tests for wadon, sparser beat levels, split and join patterns
 def percentOffBeatWadonO():
     '''
     Returns percent of single 'o' strokes that land off the beat in wadon patterns, 
