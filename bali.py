@@ -507,7 +507,7 @@ class Pattern(object):
             return 0.0
         return numberOfStroke
     
-    def firstOrThirdBeat(self, typeOfStroke='e'):
+    def firstOrThirdBeat(self, typeOfStroke=['e']):
         '''
         Returns how many strokes of a certain type land on first or third beat
         in a guntang
@@ -515,22 +515,29 @@ class Pattern(object):
         >>> import bali
         >>> fp = bali.FileParser()
         >>> lanangPatterns = fp.separatePatternsByDrum()[0]
+        >>> wadonPatterns = fp.separatePatternsByDrum()[1]
         >>> pattern = lanangPatterns[1]
-        >>> pattern.firstOrThirdBeat('e')['first']
+        >>> pattern.firstOrThirdBeat(['e'])['first']
         0
-        >>> pattern.firstOrThirdBeat('e')['third']
+        >>> pattern.firstOrThirdBeat(['e'])['third']
         1
 
         >>> pattern2 = lanangPatterns[2]
-        >>> pattern2.firstOrThirdBeat('e')['first']
+        >>> pattern2.firstOrThirdBeat(['e'])['first']
         0
-        >>> pattern2.firstOrThirdBeat('e')['third']
+        >>> pattern2.firstOrThirdBeat(['e'])['third']
+        1
+        
+        >>> pattern3 = wadonPatterns[-1]
+        >>> pattern3.firstOrThirdBeat(['d', 'D'])['first']
+        1
+        >>> pattern3.firstOrThirdBeat(['d', 'D'])['first']
         1
         '''
         firstBeat = 0
         thirdBeat = 0
         for beat, stroke in self.iterateStrokes():
-            if stroke != typeOfStroke:
+            if stroke not in typeOfStroke:
                 continue
             if (beat - .25) % 1 == 0:
                 firstBeat += 1
@@ -573,6 +580,73 @@ class Pattern(object):
                 fourthBeat += 1
         return {'second': secondBeat, 'fourth': fourthBeat}   
 
+
+    def whenLanangOffT(self):
+        '''
+        Returns in which half of the gong lanang T's land off the beat
+        when they're on the first subdivision of beat
+        
+        >>> import bali
+        >>> fp = bali.FileParser()
+        >>> lanangPatterns = fp.separatePatternsByDrum()[0]
+        >>> pattern = lanangPatterns[7]
+        >>> pattern.whenLanangOffT()['first half']
+        0
+        >>> pattern.whenLanangOffT()['second half']
+        1
+        
+        >>> pattern2 = lanangPatterns[-9]
+        >>> pattern2.whenLanangOffT()['first half']
+        1
+        >>> pattern2.whenLanangOffT()['second half']
+        1
+        '''
+        firstHalf = 0
+        secondHalf = 0
+        for beat, stroke in self.iterateStrokes():
+            if stroke != 'T':
+                continue
+            if (beat - .25) % 1 == 0:
+                if (beat / 4) < 0.5:
+                    firstHalf += 1
+                if (beat / 4) >= 0.5:
+                    secondHalf += 1
+        return {'first half': firstHalf, 'second half': secondHalf}       
+                
+    def whenWadonOffD(self):
+        '''
+        Returns in which half of the gong wadon D's land off the beat
+        when they're on the 1st or 3rd division of the beat
+        
+        >>> import bali
+        >>> fp = bali.FileParser()
+        >>> wadonPatterns = fp.separatePatternsByDrum()[1]
+        
+        >>> pattern = wadonPatterns[-6]
+        >>> pattern.whenWadonOffD()['first half']
+        2
+        >>> pattern.whenWadonOffD()['second half']
+        2
+        
+        >>> pattern2 = wadonPatterns[-7]
+        >>> pattern2.whenWadonOffD()['first half']
+        2
+        >>> pattern2.whenWadonOffD()['second half']
+        1
+        '''
+        
+        firstHalf = 0
+        secondHalf = 0
+        for beat, stroke in self.iterateStrokes():
+            if stroke != 'D' and stroke != 'd':
+                continue
+            if (beat - .25) % 1 == 0 or (beat - .75) % 1 == 0:
+                if (beat / 4) < 0.5:
+                    firstHalf += 1
+                if (beat / 4) >= 0.5:
+                    secondHalf += 1
+        return {'first half': firstHalf, 'second half': secondHalf}  
+    
 
     def removeSingleStrokes(self, typeOfStroke='e'):
         '''
@@ -694,31 +768,6 @@ class Pattern(object):
         >>> removedBothDoubles = removedSingle.removeConsecutiveStrokes('e', removeSecond=True)
         >>> removedBothDoubles
         <bali.Taught Pak Tut Lanang Dasar 2:(_). . _ _ . . _ , _ _ . . T _ T _>
-        
-        Calling percentOnBeatList on revised lanangPatterns, with eighth pattern
-        having all single and first double strokes removed
-        
-        >>> import statistics
-        >>> lanangPatterns = fp.separatePatternsByDrum()[0]
-        >>> numLanang = len(lanangPatterns)
-        
-        >>> percentListBefore = taught_questions.percentOnBeatLanangE(lanangPatterns, 'e')
-        >>> percentListBefore[7]
-        57...
-        >>> statistics.mean(percentListBefore)
-        54...
-
-        >>> for i in range(numLanang):
-        ...     lanangPatterns[i] = lanangPatterns[i].removeConsecutiveStrokes('e')
-        >>> lanangPatterns[7]
-        <bali.Taught Pak Tut Lanang Dasar 2:(_). e _ _ . e _ e _ _ . e T _ T _>
-        
-        >>> percentListAfter = taught_questions.percentOnBeatList(lanangPatterns, 'e')
-        >>> percentListAfter[7]
-        100.0
-        >>> statistics.mean(percentListAfter)
-        80.0
-        
         
         
         TODO: Leslie -- how to deal with across a repetition boundary

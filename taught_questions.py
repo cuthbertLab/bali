@@ -45,6 +45,7 @@ def percentOnBeatLanangE():
         percents.append((percent, weight))
     return percents
 
+
 def percentOffBeatLanangTGuntang():
     '''
     Returns percent off beat for a lanang 'T' stroke for every pattern, at beat level guntang
@@ -209,6 +210,10 @@ def percentOnBeatWadonDDouble():
     return percents
 
 
+
+    
+        
+        
 if __name__ == '__main__':
     import music21
     music21.mainTest()
