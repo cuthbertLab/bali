@@ -5,6 +5,40 @@ from __future__ import print_function, absolute_import, division
 #from pprint import pprint as print
 import bali
 fp = bali.FileParser()
+
+class PercentList(list):
+    '''
+    A list where each element is a tuple of (percent, weight), that
+    can calculate certain things...
+    '''
+
+    def num(self):
+        '''
+        return the ... KY EXPLAIN... 
+        '''
+        tot = 0
+        for percent, weight in self:
+            tot += percent * weight
+        return tot
+
+    def denom(self):
+        '''
+        return the total amount of weight in the list 
+        '''
+        tot = 0
+        for unused_percent, weight in self:
+            tot += weight
+        return tot
+
+    def weighedTotalPercentage(self):
+        '''
+        return num/denom...
+        '''
+        denom = self.denom()
+        if denom == 0:
+            raise ZeroDivisionError("There are no matching strokes in this list") 
+        return self.num()/denom
+
 '''
 Try to prove hypothesis that Lanang strokes are on the beat and Wadon strokes
 are off the beat
@@ -18,7 +52,7 @@ What percentage of Lanang and Wadon is on and off the beat?
 
 def percentOnBeatLanangE():
     '''
-    Returns percent on beat for a lanang Peng for every pattern, at beat level double
+    Returns a PercentList for a lanang Peng for every pattern, at beat level double
     
     >>> import bali, taught_questions
     >>> percentList = taught_questions.percentOnBeatLanangE()
@@ -28,17 +62,11 @@ def percentOnBeatLanangE():
     85.7...
     >>> percentList[-1][0]
     66.6...
-    
-    >>> num = 0
-    >>> denom = 0
-    >>> for (percent, weight) in percentList:
-    ...     num += percent * weight
-    ...     denom += weight
-    >>> num/denom
+    >>> percentList.weighedTotalPercentage()
     56...
     '''
     lanangPatterns = fp.separatePatternsByDrum()[0]
-    percents = []
+    percents = PercentList()
     for i in range(len(lanangPatterns)):
         percent = lanangPatterns[i].percentOnBeat('e')
         weight = lanangPatterns[i].beatsInPattern('e')
@@ -58,16 +86,13 @@ def percentOffBeatLanangEGuntang():
     >>> percentList[4][0]
     100.0
     
-    >>> num = 0
-    >>> denom = 0
-    >>> for (percent, weight) in percentList:
-    ...     num += percent * weight
-    ...     denom += weight
-    >>> num/denom
+    >>> percentList.weighedTotalPercentage()
     75.9...
+    >>> percentList.denom()
+    83.0
     '''
     lanangPatterns = fp.separatePatternsByDrum()[0]
-    percents = []
+    percents = PercentList()
     for i in range(len(lanangPatterns)):
         pattern = lanangPatterns[i].removeSingleStrokes('e')
         pattern = pattern.removeConsecutiveStrokes('e')
@@ -95,6 +120,8 @@ def percentOffBeatLanangTGuntang():
     ...     denom += weight
     >>> num/denom
     97...
+    >>> denom
+    111.0
     '''
     lanangPatterns = fp.separatePatternsByDrum()[0]
     percents = []
@@ -152,7 +179,7 @@ def whenLanangOffTList():
     for i in range(len(lanangPatterns)):
         dist['first half'] += lanangPatterns[i].whenLanangOffT()['first half']
         dist['second half'] += lanangPatterns[i].whenLanangOffT()['second half']
-        print(dist)
+        #print(dist) #for debugging
     return dist 
 
 
@@ -182,26 +209,26 @@ def percentOffBeatWadonO():
     return percents
 
 
-def offBeatWadonDBeat():
-    '''
-    Returns how many times a wadon 'D' lands on the 1st or 3rd beat of a 
-    guntang when it's off beat
-    
-    >>> import bali, taught_questions
-    >>> firstorthird = taught_questions.offBeatWadonDBeat()
-    
-    '''
-    wadonPatterns = fp.separatePatternsByDrum()[1]
-    percents = []
-    for i in range(len(wadonPatterns)):
-        pattern = wadonPatterns[i]
-        percent = pattern.percentOnBeat('D', bali.BeatLevel.guntang)
-        firstBeat = 0
-        thirdBeat = 0
-        
-        
-        percents.append((percent, firstBeat, thirdBeat))
-    return percents
+# def offBeatWadonDBeat():
+#     '''
+#     Returns how many times a wadon 'D' lands on the 1st or 3rd beat of a 
+#     guntang when it's off beat
+#     
+#     >>> import bali, taught_questions
+#     >>> firstorthird = taught_questions.offBeatWadonDBeat()
+#     
+#     '''
+#     wadonPatterns = fp.separatePatternsByDrum()[1]
+#     percents = []
+#     for i in range(len(wadonPatterns)):
+#         pattern = wadonPatterns[i]
+#         percent = pattern.percentOnBeat('D', bali.BeatLevel.guntang)
+#         firstBeat = 0
+#         thirdBeat = 0
+#         
+#         
+#         percents.append((percent, firstBeat, thirdBeat))
+#     return percents
     
 def percentOnBeatWadonDGuntang():
     '''
@@ -219,13 +246,15 @@ def percentOnBeatWadonDGuntang():
     >>> for (percent, weight) in percentList:
     ...     num += percent * weight
     ...     denom += weight
+    
+    Great confirmation of a null hypothesis: 25%
+    
     >>> num/denom
     26...
     '''
     wadonPatterns = fp.separatePatternsByDrum()[1]
     percents = []
-    for i in range(len(wadonPatterns)):
-        pattern = wadonPatterns[i]
+    for pattern in wadonPatterns:
         percent = pattern.percentOnBeat('D', bali.BeatLevel.guntang)
         weight = pattern.beatsInPattern('D')
         percents.append((percent, weight))
@@ -248,6 +277,9 @@ def percentOnBeatWadonDDouble():
     >>> for (percent, weight) in percentList:
     ...     num += percent * weight
     ...     denom += weight
+    
+    Close to null hypothesis
+    
     >>> num/denom
     44.0
     '''
@@ -284,7 +316,8 @@ def percentOnBeatWadonOGuntang():
     wadonPatterns = fp.separatePatternsByDrum()[1]
     percents = []
     for i in range(len(wadonPatterns)):
-        pattern = wadonPatterns[i].removeSingleStrokes('o')
+        pattern = wadonPatterns[i]
+        pattern = pattern.removeSingleStrokes('o')
         pattern = pattern.removeConsecutiveStrokes('o')
         percent = pattern.percentOnBeat('o', bali.BeatLevel.guntang)
         weight = pattern.beatsInPattern('o')

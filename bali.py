@@ -19,6 +19,7 @@ import re
 #import weakref
 import unittest
 import copy
+import random
 import enum
 
 import music21 # @UnresolvedImport
@@ -86,6 +87,32 @@ class Pattern(object):
         
         '''  
         return copy.deepcopy(self)
+    
+    def shuffleStrokes(self):
+        '''
+        returns a new Pattern object based on this one where the
+        strokes have been scrambled.
+        
+        >>> import bali
+        >>> fp = bali.FileParser()
+        >>> pattern = fp.taught[9]
+        >>> pattern
+        <bali.Taught Pak Dewa Lanang 8:(l)_ e T l _ e T l _ e T l _ e T l>
+        >>> ''.join(pattern.strokes)
+        'l_eTl_eTl_eTl_eTl'
+        
+        >>> p2 = pattern.shuffleStrokes()
+        >>> p2strokes = ''.join(p2.strokes)
+        >>> 'l_eTl_eTl_eTl_eTl' in p2strokes
+        False
+        >>> p2strokes.count('e')
+        4
+        '''
+        p2 = self.copy()
+        oldStrokes = p2.strokes
+        random.shuffle(oldStrokes)
+        p2.strokes = oldStrokes
+        return p2
       
     def _getStrokes(self):
         '''
