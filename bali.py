@@ -605,14 +605,18 @@ class Pattern(object):
         return {'second': secondBeat, 'fourth': fourthBeat}   
 
 
-    def whenLanangOffT(self):
+    def whenLanangOffT(self, beatDivision='first'):
         '''
-        Returns in which half of the gong lanang T strokes land off the beat
-        when they're on the first subdivision of beat
+        Returns in which half of the gong lanang tut strokes land off the beat
+        when they're on the first or third subdivision of beat
+        First of all double strokes removed
         
         >>> import bali
         >>> fp = bali.FileParser()
         >>> lanangPatterns = fp.separatePatternsByDrum()[0]
+        
+        Testing when beatDivision is first
+        
         >>> pattern = lanangPatterns[7]
         >>> pattern.whenLanangOffT()['first half']
         0
@@ -624,6 +628,21 @@ class Pattern(object):
         1
         >>> pattern2.whenLanangOffT()['second half']
         1
+        
+        
+        Testing when beatDivision is third
+        
+        >>> pattern3 = lanangPatterns[7]
+        >>> pattern3.whenLanangOffT('third')['first half']
+        0
+        >>> pattern3.whenLanangOffT('third')['second half']
+        1
+        
+        >>> pattern4 = lanangPatterns[-9]
+        >>> pattern4.whenLanangOffT('third')['first half']
+        1
+        >>> pattern4.whenLanangOffT('third')['second half']
+        2
         '''
  
         firstHalf = 0
@@ -632,22 +651,32 @@ class Pattern(object):
         for beat, stroke in zip(self.iterateStrokes(), pattern.strokes[1:]):
             if stroke != 'T':
                 continue
-            if (beat[0] - .25) % 1 == 0:
-                if (beat[0] / 4) < 0.5:
-                    firstHalf += 1
-                if (beat[0] / 4) >= 0.5:
-                    secondHalf += 1
+            if beatDivision == 'first':
+                if (beat[0] - .25) % 1 == 0:
+                    if (beat[0] / 4) < 0.5:
+                        firstHalf += 1
+                    if (beat[0] / 4) >= 0.5:
+                        secondHalf += 1
+            elif beatDivision == 'third':
+                if (beat[0] - .75) % 1 == 0:
+                    if (beat[0] / 4) < 0.5:
+                        firstHalf += 1
+                    if (beat[0] / 4) >= 0.5:
+                        secondHalf += 1  
         return {'first half': firstHalf, 'second half': secondHalf}       
                 
-    def whenWadonOffD(self):
+ 
+    def whenWadonOffD(self, beatDivision='first'):
         '''
-        Returns in which half of the gong wadon D's land off the beat
-        when they're on the 1st or 3rd division of the beat, considering 
-        only single strokes
+        Returns in which half of the gong wadon dag strokes land off the beat
+        when they're on the first or third division of the beat
+        First of all double strokes removed
         
         >>> import bali
         >>> fp = bali.FileParser()
         >>> wadonPatterns = fp.separatePatternsByDrum()[1]
+        
+        Testing when beatDivision is first
         
         >>> pattern = wadonPatterns[-6]
         >>> pattern = pattern.removeConsecutiveStrokes('Dd')
@@ -656,10 +685,25 @@ class Pattern(object):
         >>> pattern.whenWadonOffD()['second half']
         1
         
-        >>> pattern2 = wadonPatterns[-7]
+        >>> pattern2 = wadonPatterns[5]
         >>> pattern2.whenWadonOffD()['first half']
-        2
+        1
         >>> pattern2.whenWadonOffD()['second half']
+        0
+        
+        
+        Testing when beatDivision is third
+        
+        >>> pattern2 = wadonPatterns[-1]
+        >>> pattern2.whenWadonOffD('third')['first half']
+        1
+        >>> pattern2.whenWadonOffD('third')['second half']
+        0
+        
+        >>> pattern2 = wadonPatterns[-7]
+        >>> pattern2.whenWadonOffD('third')['first half']
+        1
+        >>> pattern2.whenWadonOffD('third')['second half']
         0
         '''
         
@@ -669,11 +713,18 @@ class Pattern(object):
         for beat, stroke in zip(self.iterateStrokes(), pattern.strokes[1:]):
             if stroke != 'D' and stroke != 'd':
                 continue
-            if (beat[0] - .25) % 1 == 0 or (beat[0] - .75) % 1 == 0:
-                if (beat[0] / 4) < 0.5:
-                    firstHalf += 1
-                if (beat[0] / 4) >= 0.5:
-                    secondHalf += 1
+            if beatDivision == 'first':
+                if (beat[0] - .25) % 1 == 0 or (beat[0] - .75) % 1 == 0:
+                    if (beat[0] / 4) < 0.5:
+                        firstHalf += 1
+                    if (beat[0] / 4) >= 0.5:
+                        secondHalf += 1
+            elif beatDivision == 'third':
+                if (beat[0] - .75) % 1 == 0 or (beat[0] - .75) % 1 == 0:
+                    if (beat[0] / 4) < 0.5:
+                        firstHalf += 1
+                    if (beat[0] / 4) >= 0.5:
+                        secondHalf += 1               
         return {'first half': firstHalf, 'second half': secondHalf}  
     
 
