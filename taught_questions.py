@@ -3,7 +3,7 @@
 from __future__ import print_function, absolute_import, division
 
 #from pprint import pprint as print
-import bali
+import bali, itertools
 fp = bali.FileParser()
 
 class PercentList(list):
@@ -336,6 +336,61 @@ def whenWadonOffDList(beatDivision='first'):
             dist['second half'] += pattern.whenWadonOffD('third')['second half']
     return dist 
 
+
+'''
+Testing if Leslie's theories are statistically significant (p < 0.05), using
+randomly generated scrambled drum patterns 
+'''
+
+def createRandomPatterns(numberOfPatterns):
+    '''
+    Returns a list of numberOfPattern Pattern objects whose strokes are scrambled randomly
+    
+    >>> import bali, taught_questions, itertools
+    >>> fp = bali.FileParser()
+
+
+    Creating shuffled list of length 4
+    
+    >>> randomList4 = taught_questions.createRandomPatterns(4)
+    >>> len(randomList4)
+    4
+    >>> pattern = randomList4[0]
+    >>> pattern.drumPattern.count('e')
+    9
+    
+    
+    Creating shuffled list of length 100
+    
+    >>> randomList100 = taught_questions.createRandomPatterns(100)
+    >>> len(randomList100)
+    100
+    >>> pattern2 = randomList100[3]
+    >>> pattern2.strokes.count('e')
+    7
+    >>> ''.join(pattern2.strokes).count('T')
+    1
+    
+    Checking that itertools.cycle looped around correctly
+    >>> pattern3 = randomList100[63]
+    >>> pattern3.strokes.count('e')
+    9
+    >>> pattern3.strokes.count('T')
+    0
+    '''
+    fp = bali.FileParser()
+    taughtPatterns = [patt for patt in fp.taught]
+    
+    randomPatterns = itertools.cycle(taughtPatterns)
+    randomPatternsList = []
+    count = 0
+    for pattern in randomPatterns:
+        randomPatternsList.append(pattern.shuffleStrokes())
+        count += 1
+        if count >= numberOfPatterns:
+            break
+    return randomPatternsList
+        
 
 
 '''   
