@@ -409,14 +409,16 @@ def percentOnBeatLanangEDoubleScrambled():
     >>> import bali, taught_questions
     >>> percentList = taught_questions.percentOnBeatLanangEDoubleScrambled()[0]
     >>> beatTheory = taught_questions.percentOnBeatLanangEDoubleScrambled()[1]
-    >>> 0.3 < percentList.weighedTotalPercentage() < 0.7
-    True 
-    >>> len(beatTheory) <= 400
+    >>> percentList.weighedTotalPercentage() < 58.6
     True
     
-    #this is a very low threshold
+    >>> len(beatTheory) < 40
+    True 
+    
+    #also a bad threshold
+  
     '''
-    randomPatterns = createRandomPatterns(1000)
+    randomPatterns = createRandomPatterns(100)
     percents = PercentList()
     beatTheory = []
     for pattern in randomPatterns:
@@ -445,12 +447,15 @@ def percentOnBeatLanangEDoubleSingleScrambled():
     >>> import bali, taught_questions
     >>> percentList = taught_questions.percentOnBeatLanangEDoubleSingleScrambled()[0]
     >>> beatTheory = taught_questions.percentOnBeatLanangEDoubleSingleScrambled()[1]
-    >>> 0.3 < percentList.weighedTotalPercentage() < 0.7
+    >>> percentList.weighedTotalPercentage() < 68.7
     True
-    >>> len(beatTheory) <= 50
+    
+    >>> len(beatTheory) < 25
     True
+    
+    #bad threshold
     '''
-    randomPatterns = createRandomPatterns(1000)
+    randomPatterns = createRandomPatterns(100)
     percents = PercentList()
     beatTheory = []
     for pattern in randomPatterns:
@@ -475,12 +480,13 @@ def percentOffBeatWadonODoubleSingleScrambled():
     >>> import bali, taught_questions
     >>> percentList = taught_questions.percentOffBeatWadonODoubleSingleScrambled()[0]
     >>> beatTheory = taught_questions.percentOffBeatWadonODoubleSingleScrambled()[1]
-    >>> 0.3 < percentList.weighedTotalPercentage() < 0.7
+    >>> percentList.weighedTotalPercentage() < 90.7
     True
-    >>> len(beatTheory) <= 50
+
+    >>> len(beatTheory) < 10
     True
     '''
-    randomPatterns = createRandomPatterns(1000)
+    randomPatterns = createRandomPatterns(100)
     percents = PercentList()
     beatTheory = []
     for pattern in randomPatterns:
@@ -488,7 +494,7 @@ def percentOffBeatWadonODoubleSingleScrambled():
             pattern = pattern.removeConsecutiveStrokes('o', True, True)
             percent = pattern.percentOnBeat('o', bali.BeatLevel.double)
             weight = pattern.beatsInPattern('o')
-            if percent <= 90.7:
+            if percent < 9.3:
                 beatTheory.append(pattern.drumPattern)
             percents.append((100 - percent, weight))
     return (percents, beatTheory)
@@ -509,12 +515,14 @@ def percentOffBeatLanangEGuntangSecondDoubleScrambled():
     >>> import bali, taught_questions
     >>> percentList = taught_questions.percentOffBeatLanangEGuntangSecondDoubleScrambled()[0]
     >>> beatTheory = taught_questions.percentOffBeatLanangEGuntangSecondDoubleScrambled()[1]
-    >>> 0.3 < percentList.weighedTotalPercentage() < 0.7
+    >>> percentList.weighedTotalPercentage() < 75.9
     True
-    >>> len(beatTheory) <= 50
+    
+    >>> len(beatTheory) < 10
     True
+
     '''
-    randomPatterns = createRandomPatterns(1000)
+    randomPatterns = createRandomPatterns(100)
     percents = PercentList()
     beatTheory = []
     for pattern in randomPatterns:
@@ -523,7 +531,7 @@ def percentOffBeatLanangEGuntangSecondDoubleScrambled():
             pattern = pattern.removeConsecutiveStrokes('e')
             percent = pattern.percentOnBeat('e', bali.BeatLevel.guntang)
             weight = pattern.beatsInPattern('e')
-            if percent <= 75.9:
+            if percent > 75.9:
                 beatTheory.append(pattern.drumPattern)
             percents.append((100 - percent, weight))
     return (percents, beatTheory)
@@ -539,11 +547,15 @@ def percentOnBeatWadonOGuntangSecondDoubleScrambled():
     >>> import bali, taught_questions
     >>> percentList = taught_questions.percentOnBeatWadonOGuntangSecondDoubleScrambled()[0]
     >>> beatTheory = taught_questions.percentOnBeatWadonOGuntangSecondDoubleScrambled()[1]
-    >>> 0.3 < percentList.weighedTotalPercentage() < 0.7
-    >>> len(beatTheory) <= 50
+    >>> percentList.weighedTotalPercentage() < 62
     True
+    
+    >>> len(beatTheory) < 30
+    True
+    
+    #this is a low threshold
     '''
-    randomPatterns = createRandomPatterns(1000)
+    randomPatterns = createRandomPatterns(100)
     percents = PercentList()
     beatTheory = []
     for pattern in randomPatterns:
@@ -578,9 +590,10 @@ def percentOffBeatLanangTGuntangScrambled():
     >>> import bali, taught_questions
     >>> percentList = taught_questions.percentOffBeatLanangTGuntangScrambled()[0]
     >>> beatTheory = taught_questions.percentOffBeatLanangTGuntangScrambled()[1]
-    >>> 0.3 < percentList.weighedTotalPercentage() < 0.7
+    >>> percentList.weighedTotalPercentage() < 97.2
     True
-    >>> len(beatTheory) <= 50
+
+    >>> len(beatTheory) < 10
     True
     '''
     randomPatterns = createRandomPatterns(100)
@@ -590,7 +603,7 @@ def percentOffBeatLanangTGuntangScrambled():
         if pattern.drumType == 'Lanang':
             percent = pattern.percentOnBeat('T', bali.BeatLevel.guntang)
             weight = pattern.beatsInPattern('T')
-            if percent >= 97.2:
+            if percent < 2.8:
                 beatTheory.append(pattern.drumPattern)
             percents.append((100 - percent, weight))
     return (percents, beatTheory)
@@ -609,13 +622,14 @@ def percentOnBeatWadonDGuntangScrambled():
     >>> import bali, taught_questions
     >>> percentList = taught_questions.percentOnBeatWadonDGuntangScrambled()[0]
     >>> beatTheory = taught_questions.percentOnBeatWadonDGuntangScrambled()[1]
-    >>> percentList.weighedTotalPercentage()
-    2... 
-    >>> len(beatTheory) <= 50
+    >>> percentList.weighedTotalPercentage() < 30
+    True
+    
+    >>> len(beatTheory) < 20
     True
     '''
     
-    randomPatterns = createRandomPatterns(1000)
+    randomPatterns = createRandomPatterns(100)
     percents = PercentList()
     beatTheory = []
     for pattern in randomPatterns:
@@ -640,17 +654,16 @@ def whenLanangOffTListScrambled(beatDivision='first'):
     
     Testing when beatDivision is first
     
-    >>> 0.7 < ((taught_questions.whenLanangOffTListScrambled()['first half']) / (taught_questions.whenLanangOffTListScrambled()['second half'])) < 1.3
-    True
+    >>> (taught_questions.whenLanangOffTListScrambled()['first half']) / (taught_questions.whenLanangOffTListScrambled()['second half'])
     
     
     Testing when beatDivision is third
     
-    >>> 0.7 < ((taught_questions.whenLanangOffTListScrambled('third')['first half']) / (taught_questions.whenLanangOffTListScrambled('third')['second half'])) < 1.3
-    True
+    >>> (taught_questions.whenLanangOffTListScrambled('third')['first half']) / (taught_questions.whenLanangOffTListScrambled('third')['second half'])
+
     '''
     
-    randomPatterns = createRandomPatterns(1000)
+    randomPatterns = createRandomPatterns(100)
     dist = {'first half': 0, 'second half': 0}
     if beatDivision == 'first':
         for pattern in randomPatterns:
@@ -677,17 +690,16 @@ def whenWadonOffDListScrambled(beatDivision='first'):
     
     Testing when beatDivision is first
     
-    >>> 0.7 < ((taught_questions.whenWadonOffDListScrambled()['first half']) / (taught_questions.whenWadonOffDListScrambled()['second half'])) < 1.3
-    True
-    
+    >>> (taught_questions.whenWadonOffDListScrambled()['first half']) / (taught_questions.whenWadonOffDListScrambled()['second half'])
+
     
     Testing when beatDivision is third
     
-    >>> 0.7 < ((taught_questions.whenWadonOffDListScrambled('third')['first half']) / (taught_questions.whenWadonOffDListScrambled('third')['second half'])) < 1.3
-    True
+    >>> (taught_questions.whenWadonOffDListScrambled('third')['first half']) / (taught_questions.whenWadonOffDListScrambled('third')['second half'])
+
     '''
     
-    randomPatterns = createRandomPatterns(1000)
+    randomPatterns = createRandomPatterns(100)
     dist = {'first half': 0, 'second half': 0}
     if beatDivision == 'first':
         for pattern in randomPatterns:
