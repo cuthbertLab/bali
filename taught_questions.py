@@ -60,9 +60,9 @@ def percentOnBeatLanangEDouble():
     '''
     lanangPatterns = fp.separatePatternsByDrum()[0]
     percents = PercentList()
-    for i in range(len(lanangPatterns)):
-        percent = lanangPatterns[i].percentOnBeat('e')
-        weight = lanangPatterns[i].beatsInPattern('e')
+    for pattern in lanangPatterns:
+        percent = pattern.percentOnBeat('e')
+        weight = pattern.beatsInPattern('e')
         percents.append((percent, weight))
     return percents
 
@@ -378,6 +378,7 @@ def createRandomPatterns(numberOfPatterns):
     >>> pattern3.strokes.count('T')
     0
     '''
+    
     fp = bali.FileParser()
     taughtPatterns = [patt for patt in fp.taught]
     
@@ -391,6 +392,316 @@ def createRandomPatterns(numberOfPatterns):
             break
     return randomPatternsList
         
+'''
+Testing all the above theories with scrambled patterns
+'''
+
+'''
+What percentage of Lanang is on the beat with nothing changed? With scrambled strokes?
+'''
+
+def percentOnBeatLanangEDoubleScrambled():
+    '''
+    Returns a PercentList for a lanang peng for every pattern, at beat level double
+    With scrambled strokes
+    If a certain scrambled pattern beat the theory, it was added to beatTheory
+    
+    >>> import bali, taught_questions
+    >>> percentList = taught_questions.percentOnBeatLanangEDoubleScrambled()[0]
+    >>> beatTheory = taught_questions.percentOnBeatLanangEDoubleScrambled()[1]
+    >>> 0.3 < percentList.weighedTotalPercentage() < 0.7
+    True 
+    >>> len(beatTheory) <= 400
+    True
+    
+    #this is a very low threshold
+    '''
+    randomPatterns = createRandomPatterns(1000)
+    percents = PercentList()
+    beatTheory = []
+    for pattern in randomPatterns:
+        if pattern.drumType == 'Lanang':
+            percent = pattern.percentOnBeat('e')
+            weight = pattern.beatsInPattern('e')
+            if percent >= 58.6:
+                beatTheory.append(pattern.drumPattern)
+            percents.append((percent, weight))
+    return (percents, beatTheory)
+
+
+'''
+Testing that peng strokes occur on the beat in lanang and kom strokes occur off
+the beat in wadon, after removing all double strokes. With scrambled patterns.
+'''
+
+def percentOnBeatLanangEDoubleSingleScrambled():
+    '''
+    Returns PercentList for on-beats for peng strokes for all lanang patterns, 
+    at beat level double
+    Only looks at single strokes
+    With scrambled strokes. 
+    If a certain scrambled pattern beat the theory, it was added to beatTheory
+    
+    >>> import bali, taught_questions
+    >>> percentList = taught_questions.percentOnBeatLanangEDoubleSingleScrambled()[0]
+    >>> beatTheory = taught_questions.percentOnBeatLanangEDoubleSingleScrambled()[1]
+    >>> 0.3 < percentList.weighedTotalPercentage() < 0.7
+    True
+    >>> len(beatTheory) <= 50
+    True
+    '''
+    randomPatterns = createRandomPatterns(1000)
+    percents = PercentList()
+    beatTheory = []
+    for pattern in randomPatterns:
+        if pattern.drumType == 'Lanang':
+            pattern = pattern.removeConsecutiveStrokes('e', True, True)
+            percent = pattern.percentOnBeat('e', bali.BeatLevel.double)
+            weight = pattern.beatsInPattern('e')
+            if percent >= 68.7:
+                beatTheory.append(pattern.drumPattern)
+            percents.append((percent, weight)) 
+    return (percents, beatTheory)
+
+
+def percentOffBeatWadonODoubleSingleScrambled():
+    '''
+    Returns PercentList for off-beats for kom strokes for all wadon patterns, 
+    at beat level double
+    Only looks at single strokes
+    With scrambled strokes
+    If a certain scrambled pattern beat the theory, it was added to beatTheory
+
+    >>> import bali, taught_questions
+    >>> percentList = taught_questions.percentOffBeatWadonODoubleSingleScrambled()[0]
+    >>> beatTheory = taught_questions.percentOffBeatWadonODoubleSingleScrambled()[1]
+    >>> 0.3 < percentList.weighedTotalPercentage() < 0.7
+    True
+    >>> len(beatTheory) <= 50
+    True
+    '''
+    randomPatterns = createRandomPatterns(1000)
+    percents = PercentList()
+    beatTheory = []
+    for pattern in randomPatterns:
+        if pattern.drumType == 'Wadon':
+            pattern = pattern.removeConsecutiveStrokes('o', True, True)
+            percent = pattern.percentOnBeat('o', bali.BeatLevel.double)
+            weight = pattern.beatsInPattern('o')
+            if percent <= 90.7:
+                beatTheory.append(pattern.drumPattern)
+            percents.append((100 - percent, weight))
+    return (percents, beatTheory)
+
+
+'''
+Testing that lanang peng strokes are off the beat and wadon kom strokes are on the
+beat when single and the first of all double strokes are removed, at beat level guntang
+'''
+
+def percentOffBeatLanangEGuntangSecondDoubleScrambled():
+    '''
+    Returns PercentList for off-beats for a peng for all lanang patterns, at beat level guntang,
+    after removing single strokes and then first of consecutive strokes
+    With scrambled strokes
+    If a certain scrambled pattern beat the theory, it was added to beatTheory
+    
+    >>> import bali, taught_questions
+    >>> percentList = taught_questions.percentOffBeatLanangEGuntangSecondDoubleScrambled()[0]
+    >>> beatTheory = taught_questions.percentOffBeatLanangEGuntangSecondDoubleScrambled()[1]
+    >>> 0.3 < percentList.weighedTotalPercentage() < 0.7
+    True
+    >>> len(beatTheory) <= 50
+    True
+    '''
+    randomPatterns = createRandomPatterns(1000)
+    percents = PercentList()
+    beatTheory = []
+    for pattern in randomPatterns:
+        if pattern.drumType == 'Lanang':
+            pattern = pattern.removeSingleStrokes('e')
+            pattern = pattern.removeConsecutiveStrokes('e')
+            percent = pattern.percentOnBeat('e', bali.BeatLevel.guntang)
+            weight = pattern.beatsInPattern('e')
+            if percent <= 75.9:
+                beatTheory.append(pattern.drumPattern)
+            percents.append((100 - percent, weight))
+    return (percents, beatTheory)
+
+
+def percentOnBeatWadonOGuntangSecondDoubleScrambled():
+    '''
+    Returns PercentList for on-beats for a kom for all wadon pattern, at beat level guntang,
+    after removing all single strokes and the first of all double strokes
+    With scrambled strokes
+    If a certain scrambled pattern beat the theory, it was added to beatTheory
+    
+    >>> import bali, taught_questions
+    >>> percentList = taught_questions.percentOnBeatWadonOGuntangSecondDoubleScrambled()[0]
+    >>> beatTheory = taught_questions.percentOnBeatWadonOGuntangSecondDoubleScrambled()[1]
+    >>> 0.3 < percentList.weighedTotalPercentage() < 0.7
+    >>> len(beatTheory) <= 50
+    True
+    '''
+    randomPatterns = createRandomPatterns(1000)
+    percents = PercentList()
+    beatTheory = []
+    for pattern in randomPatterns:
+        if pattern.drumType == 'Wadon':
+            pattern = pattern.removeSingleStrokes('o')
+            pattern = pattern.removeConsecutiveStrokes('o')
+            percent = pattern.percentOnBeat('o', bali.BeatLevel.guntang)
+            weight = pattern.beatsInPattern('o')
+            if percent >= 62:
+                beatTheory.append(pattern.drumPattern)
+            percents.append((percent, weight))
+    return (percents, beatTheory)
+
+'''
+Dag and tut strokes
+
+Normally, lanang tuts are off the beat and wadon dags are on the beat. 
+Wadon breaks the rules more, so we are testing in which beat subdivisions
+and part of the gong cycle the rules are broken more
+'''
+
+def percentOffBeatLanangTGuntangScrambled():
+    '''
+    Returns PercentList for off-beats for a lanang tut strokes for all lanang patterns, 
+    at beat level guntang. 
+    With scrambled strokes
+    If a certain scrambled pattern beat the theory, it was added to beatTheory
+    
+    Gives us what percent tut strokes land on beat subdivisions 1 and 3 as opposed to
+    2 and 4
+    
+    >>> import bali, taught_questions
+    >>> percentList = taught_questions.percentOffBeatLanangTGuntangScrambled()[0]
+    >>> beatTheory = taught_questions.percentOffBeatLanangTGuntangScrambled()[1]
+    >>> 0.3 < percentList.weighedTotalPercentage() < 0.7
+    True
+    >>> len(beatTheory) <= 50
+    True
+    '''
+    randomPatterns = createRandomPatterns(100)
+    percents = PercentList()
+    beatTheory = []
+    for pattern in randomPatterns:
+        if pattern.drumType == 'Lanang':
+            percent = pattern.percentOnBeat('T', bali.BeatLevel.guntang)
+            weight = pattern.beatsInPattern('T')
+            if percent >= 97.2:
+                beatTheory.append(pattern.drumPattern)
+            percents.append((100 - percent, weight))
+    return (percents, beatTheory)
+
+
+def percentOnBeatWadonDGuntangScrambled():
+    '''
+    Returns PercentList for on-beats for dag strokes for all wadon patterns, 
+    at beat level guntang. 
+    First of all double strokes removed.
+    Gives us what percent dag strokes land on beat subdivisions 2 and 4 as opposed to
+    1 and 3
+    With scrambled strokes
+    If a certain scrambled pattern beat the theory, it was added to beatTheory
+    
+    >>> import bali, taught_questions
+    >>> percentList = taught_questions.percentOnBeatWadonDGuntangScrambled()[0]
+    >>> beatTheory = taught_questions.percentOnBeatWadonDGuntangScrambled()[1]
+    >>> percentList.weighedTotalPercentage()
+    2... 
+    >>> len(beatTheory) <= 50
+    True
+    '''
+    
+    randomPatterns = createRandomPatterns(1000)
+    percents = PercentList()
+    beatTheory = []
+    for pattern in randomPatterns:
+        if pattern.drumType == 'Wadon':
+            pattern = pattern.removeConsecutiveStrokes('Dd')
+            percent = pattern.percentOnBeat('D', bali.BeatLevel.guntang)
+            weight = pattern.beatsInPattern('D')
+            if percent >= 26:
+                beatTheory.append(pattern.drumPattern)
+            percents.append((percent, weight))
+    return (percents, beatTheory)
+
+
+def whenLanangOffTListScrambled(beatDivision='first'):
+    '''
+    Returns distribution of which half of the gong lanang tuts land in
+    when they're on the first or third division of the beat
+    In dictionary form.
+    With scrambled strokes
+    
+    >>> import bali, taught_questions
+    
+    Testing when beatDivision is first
+    
+    >>> 0.7 < ((taught_questions.whenLanangOffTListScrambled()['first half']) / (taught_questions.whenLanangOffTListScrambled()['second half'])) < 1.3
+    True
+    
+    
+    Testing when beatDivision is third
+    
+    >>> 0.7 < ((taught_questions.whenLanangOffTListScrambled('third')['first half']) / (taught_questions.whenLanangOffTListScrambled('third')['second half'])) < 1.3
+    True
+    '''
+    
+    randomPatterns = createRandomPatterns(1000)
+    dist = {'first half': 0, 'second half': 0}
+    if beatDivision == 'first':
+        for pattern in randomPatterns:
+            if pattern.drumType == 'Lanang':
+                dist['first half'] += pattern.whenLanangOffT()['first half']
+                dist['second half'] += pattern.whenLanangOffT()['second half']
+    elif beatDivision == 'third':
+        for pattern in randomPatterns:
+            if pattern.drumType == 'Lanang':
+                dist['first half'] += pattern.whenLanangOffT('third')['first half']
+                dist['second half'] += pattern.whenLanangOffT('third')['second half']        
+    return dist 
+
+
+
+def whenWadonOffDListScrambled(beatDivision='first'):
+    '''
+    Returns distribution of which half of the gong wadon dags land in
+    when they're on the first or third division of the beat. 
+    In dictionary form.
+    With scrambled strokes
+    
+    >>> import bali, taught_questions
+    
+    Testing when beatDivision is first
+    
+    >>> 0.7 < ((taught_questions.whenWadonOffDListScrambled()['first half']) / (taught_questions.whenWadonOffDListScrambled()['second half'])) < 1.3
+    True
+    
+    
+    Testing when beatDivision is third
+    
+    >>> 0.7 < ((taught_questions.whenWadonOffDListScrambled('third')['first half']) / (taught_questions.whenWadonOffDListScrambled('third')['second half'])) < 1.3
+    True
+    '''
+    
+    randomPatterns = createRandomPatterns(1000)
+    dist = {'first half': 0, 'second half': 0}
+    if beatDivision == 'first':
+        for pattern in randomPatterns:
+            if pattern.drumType == 'Wadon':
+                dist['first half'] += pattern.whenWadonOffD()['first half']
+                dist['second half'] += pattern.whenWadonOffD()['second half']
+    elif beatDivision == 'third':
+        for pattern in randomPatterns:
+            if pattern.drumType == 'Wadon':
+                dist['first half'] += pattern.whenWadonOffD('third')['first half']
+                dist['second half'] += pattern.whenWadonOffD('third')['second half']
+    return dist 
+
+
 
 
 '''   
