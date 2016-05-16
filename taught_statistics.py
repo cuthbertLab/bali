@@ -105,7 +105,9 @@ What percentage of Lanang is on the beat with nothing changed? With scrambled st
 def percentOnBeatLanangEDoubleScrambled():
     '''
     Returns a PercentList for a lanang peng for every pattern, at beat level double
+    
     With scrambled strokes
+    
     If a certain scrambled pattern beat the theory, it was added to beatTheory
     
     >>> import bali, taught_questions, taught_statistics
@@ -117,7 +119,7 @@ def percentOnBeatLanangEDoubleScrambled():
     >>> len(beatTheory) < 40
     True 
     
-    #also a bad threshold
+    a bad threshold
   
     '''
     randomPatterns = createRandomPatterns(100)
@@ -142,16 +144,22 @@ def percentOnBeatLanangEDoubleSingleScrambled():
     '''
     Returns PercentList for on-beats for peng strokes for all lanang patterns, 
     at beat level double
+    
     Only looks at single strokes
+    
     With scrambled strokes. 
+    
     If a certain scrambled pattern beat the theory, it was added to beatTheory
     
     >>> import bali, taught_questions, taught_statistics
     >>> percentList = taught_statistics.percentOnBeatLanangEDoubleSingleScrambled()[0]
     >>> beatTheory = taught_statistics.percentOnBeatLanangEDoubleSingleScrambled()[1]
+    
+    Want the weighed average to be less than 68.7%, which was the threshold without scrambled
+    patterns
     >>> percentList.weighedTotalPercentage() < 68.7
     True
-    
+ 
     >>> len(beatTheory) < 25
     True
     
@@ -175,18 +183,25 @@ def percentOffBeatWadonODoubleSingleScrambled():
     '''
     Returns PercentList for off-beats for kom strokes for all wadon patterns, 
     at beat level double
+    
     Only looks at single strokes
+    
     With scrambled strokes
+    
     If a certain scrambled pattern beat the theory, it was added to beatTheory
 
     >>> import bali, taught_questions, taught_statistics
     >>> percentList = taught_statistics.percentOffBeatWadonODoubleSingleScrambled()[0]
     >>> beatTheory = taught_statistics.percentOffBeatWadonODoubleSingleScrambled()[1]
+    
+    Want weighed average to be less than 90.7%, which is the threshold without scrambled patterns
     >>> percentList.weighedTotalPercentage() < 90.7
     True
 
     >>> len(beatTheory) < 10
     True
+    
+    pretty good
     '''
     randomPatterns = createRandomPatterns(100)
     percents = PercentList()
@@ -211,18 +226,24 @@ def percentOffBeatLanangEGuntangSecondDoubleScrambled():
     '''
     Returns PercentList for off-beats for a peng for all lanang patterns, at beat level guntang,
     after removing single strokes and then first of consecutive strokes
+    
     With scrambled strokes
+    
     If a certain scrambled pattern beat the theory, it was added to beatTheory
+    
+    This produced a lot of scrambled patterns that beat the theory because they had very few peng
+    strokes left after removing single and first of consecutive strokes
     
     >>> import bali, taught_questions, taught_statistics
     >>> percentList = taught_statistics.percentOffBeatLanangEGuntangSecondDoubleScrambled()[0]
     >>> beatTheory = taught_statistics.percentOffBeatLanangEGuntangSecondDoubleScrambled()[1]
+    
+    Want weighed average to be less than 75.9%, which is the average without scrambled patterns
     >>> percentList.weighedTotalPercentage() < 75.9
     True
     
-    >>> len(beatTheory) < 10
+    >>> len(beatTheory) < 20
     True
-
     '''
     randomPatterns = createRandomPatterns(100)
     percents = PercentList()
@@ -243,19 +264,26 @@ def percentOnBeatWadonOGuntangSecondDoubleScrambled():
     '''
     Returns PercentList for on-beats for a kom for all wadon pattern, at beat level guntang,
     after removing all single strokes and the first of all double strokes
+    
     With scrambled strokes
+    
     If a certain scrambled pattern beat the theory, it was added to beatTheory
     
     >>> import bali, taught_questions, taught_statistics
     >>> percentList = taught_statistics.percentOnBeatWadonOGuntangSecondDoubleScrambled()[0]
     >>> beatTheory = taught_statistics.percentOnBeatWadonOGuntangSecondDoubleScrambled()[1]
+    
+    Want weighed average to be less than 62%, which is the threshold without scrambled patterns
     >>> percentList.weighedTotalPercentage() < 62
     True
+    
+    >>> beatTheory
+    
     
     >>> len(beatTheory) < 30
     True
     
-    #this is a low threshold
+    this is a bad threshold
     '''
     randomPatterns = createRandomPatterns(100)
     percents = PercentList()

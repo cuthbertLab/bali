@@ -115,8 +115,10 @@ def percentOffBeatWadonODoubleSingle():
     >>> percentList[5][0]
     75.0
     
+    
     >>> percentList.weighedTotalPercentage()
     90.7...
+    
     >>> percentList.denom()
     65
 
